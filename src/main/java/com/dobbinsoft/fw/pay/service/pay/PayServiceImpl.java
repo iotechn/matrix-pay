@@ -1,9 +1,11 @@
 package com.dobbinsoft.fw.pay.service.pay;
 
-import com.dobbinsoft.fw.pay.config.PayConfig;
+import com.dobbinsoft.fw.pay.config.PayProperties;
 import com.dobbinsoft.fw.pay.enums.PayChannelType;
 import com.dobbinsoft.fw.pay.exception.PayServiceException;
-import com.dobbinsoft.fw.pay.handler.CallbackHandler;
+import com.dobbinsoft.fw.pay.handler.AbstractPayCallbackHandler;
+import com.dobbinsoft.fw.pay.model.context.PayCallbackContext;
+import com.dobbinsoft.fw.pay.model.context.PayCallbackContextHolder;
 import com.dobbinsoft.fw.pay.model.request.PayRefundRequest;
 import com.dobbinsoft.fw.pay.model.request.PayUnifiedOrderRequest;
 import com.dobbinsoft.fw.pay.model.result.PayOrderNotifyResult;
@@ -28,9 +30,9 @@ public class PayServiceImpl implements PayService {
 
     private WxPayServiceImpl wxPayService;
 
-    public PayServiceImpl(PayConfig payConfig) {
-        this.aliPayService = new AliPayServiceImpl(payConfig);
-        this.wxPayService = new WxPayServiceImpl(payConfig);
+    public PayServiceImpl(PayProperties payProperties) {
+        this.aliPayService = new AliPayServiceImpl(payProperties);
+        this.wxPayService = new WxPayServiceImpl(payProperties);
     }
 
     @Override
@@ -59,6 +61,9 @@ public class PayServiceImpl implements PayService {
             servletRequest.getParameterMap().forEach((k, v) -> {
                 map.put(k, v[0]);
             });
+            PayCallbackContext payCallbackContext = new PayCallbackContext();
+            payCallbackContext.setPayChannelType(PayChannelType.ALI);
+            PayCallbackContextHolder.set(payCallbackContext);
             result = aliPayService.checkSign(map);
             result.setPayChannelType(PayChannelType.ALI);
         } else {
@@ -68,6 +73,9 @@ public class PayServiceImpl implements PayService {
                 byte[] bytes = new byte[servletRequest.getContentLength()];
                 is.read(bytes);
                 String str = new String(bytes);
+                PayCallbackContext payCallbackContext = new PayCallbackContext();
+                payCallbackContext.setPayChannelType(PayChannelType.ALI);
+                PayCallbackContextHolder.set(payCallbackContext);
                 result = wxPayService.checkSign(str);
                 result.setPayChannelType(PayChannelType.WX);
             } catch (IOException e) {
@@ -80,9 +88,6 @@ public class PayServiceImpl implements PayService {
                     }
                 }
             }
-        }
-        if (!CallbackHandler.chain.isEmpty()) {
-            CallbackHandler.doFirstChain(result);
         }
         return result;
     }

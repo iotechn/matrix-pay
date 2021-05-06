@@ -1,6 +1,6 @@
 package com.dobbinsoft.fw.pay.service.pay;
 
-import com.dobbinsoft.fw.pay.config.PayConfig;
+import com.dobbinsoft.fw.pay.config.PayProperties;
 
 /**
  * ClassName: BasePayService
@@ -11,9 +11,9 @@ import com.dobbinsoft.fw.pay.config.PayConfig;
  */
 public abstract class BasePayService {
 
-    protected PayConfig propertiesHolder;
+    protected PayProperties propertiesHolder;
 
-    public BasePayService(PayConfig propertiesHolder) {
+    public BasePayService(PayProperties propertiesHolder) {
         this.propertiesHolder = propertiesHolder;
     }
 

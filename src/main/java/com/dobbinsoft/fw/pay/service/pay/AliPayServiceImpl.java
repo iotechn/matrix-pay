@@ -5,7 +5,7 @@ import com.alipay.easysdk.kernel.Config;
 import com.alipay.easysdk.payment.app.models.AlipayTradeAppPayResponse;
 import com.alipay.easysdk.payment.common.models.AlipayTradeCreateResponse;
 import com.alipay.easysdk.payment.common.models.AlipayTradeRefundResponse;
-import com.dobbinsoft.fw.pay.config.PayConfig;
+import com.dobbinsoft.fw.pay.config.PayProperties;
 import com.dobbinsoft.fw.pay.enums.PayPlatformType;
 import com.dobbinsoft.fw.pay.exception.PayServiceException;
 import com.dobbinsoft.fw.pay.model.request.PayRefundRequest;
@@ -27,14 +27,14 @@ public class AliPayServiceImpl implements PayService {
 
     private Config config;
 
-    public AliPayServiceImpl(PayConfig payConfig) {
+    public AliPayServiceImpl(PayProperties payProperties) {
         Config config = new Config();
         config.protocol = "https";
-        config.gatewayHost = payConfig.getAliGateway();
+        config.gatewayHost = payProperties.getAliGateway();
         config.signType = "RSA2";
-        config.merchantPrivateKey = payConfig.getAliMchPrivateKey();
-        config.alipayPublicKey = payConfig.getAliAliPublicKey();
-        config.notifyUrl = payConfig.getAliNotifyUrl();
+        config.merchantPrivateKey = payProperties.getAliMchPrivateKey();
+        config.alipayPublicKey = payProperties.getAliAliPublicKey();
+        config.notifyUrl = payProperties.getAliNotifyUrl();
         this.config = config;
         Factory.setOptions(this.config);
     }

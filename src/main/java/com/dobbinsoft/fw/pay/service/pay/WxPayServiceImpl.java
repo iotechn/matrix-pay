@@ -1,6 +1,6 @@
 package com.dobbinsoft.fw.pay.service.pay;
 
-import com.dobbinsoft.fw.pay.config.PayConfig;
+import com.dobbinsoft.fw.pay.config.PayProperties;
 import com.dobbinsoft.fw.pay.exception.PayServiceException;
 import com.dobbinsoft.fw.pay.model.request.PayRefundRequest;
 import com.dobbinsoft.fw.pay.model.request.PayUnifiedOrderRequest;
@@ -8,7 +8,6 @@ import com.dobbinsoft.fw.pay.model.result.PayOrderNotifyCoupon;
 import com.dobbinsoft.fw.pay.model.result.PayOrderNotifyResult;
 import com.dobbinsoft.fw.pay.model.result.PayRefundCouponInfo;
 import com.dobbinsoft.fw.pay.model.result.PayRefundResult;
-import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyCoupon;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
@@ -31,15 +30,15 @@ public class WxPayServiceImpl implements PayService {
 
     private WxPayService wxPayService;
 
-    public WxPayServiceImpl(final PayConfig payConfig) {
+    public WxPayServiceImpl(final PayProperties payProperties) {
         this.wxPayService = new com.github.binarywang.wxpay.service.impl.WxPayServiceImpl() {
             @Override
             public WxPayConfig getConfig() {
                 WxPayConfig wxPayConfig = new WxPayConfig();
-                wxPayConfig.setMchId(payConfig.getWxMchId());
-                wxPayConfig.setMchKey(payConfig.getWxMchKey());
-                wxPayConfig.setNotifyUrl(payConfig.getWxNotifyUrl());
-                wxPayConfig.setKeyPath(payConfig.getWxKeyPath());
+                wxPayConfig.setMchId(payProperties.getWxMchId());
+                wxPayConfig.setMchKey(payProperties.getWxMchKey());
+                wxPayConfig.setNotifyUrl(payProperties.getWxNotifyUrl());
+                wxPayConfig.setKeyPath(payProperties.getWxKeyPath());
                 return wxPayConfig;
             }
         };
