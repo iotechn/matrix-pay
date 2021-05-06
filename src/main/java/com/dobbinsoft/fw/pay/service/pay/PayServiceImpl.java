@@ -48,7 +48,13 @@ public class PayServiceImpl implements PayService {
 
     @Override
     public PayRefundResult refundOrder(PayRefundRequest entity) throws PayServiceException {
-        return null;
+        if (entity.getPayChannel() == PayChannelType.ALI) {
+            return this.aliPayService.refundOrder(entity);
+        } else if (entity.getPayChannel() == PayChannelType.WX) {
+            return this.wxPayService.refundOrder(entity);
+        } else {
+            throw new PayServiceException("支付渠道不支持");
+        }
     }
 
     @Override

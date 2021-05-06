@@ -39,4 +39,5 @@ public interface PayService {
      */
     public PayOrderNotifyResult checkSign(Object request) throws PayServiceException;
 
+
 }
