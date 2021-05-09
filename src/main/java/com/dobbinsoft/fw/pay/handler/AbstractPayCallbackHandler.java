@@ -24,6 +24,9 @@ public abstract class AbstractPayCallbackHandler<T> {
     public static void append(AbstractPayCallbackHandler handler, String chainName) {
         synchronized (chainHolder) {
             LinkedList<AbstractPayCallbackHandler> chain = chainHolder.putIfAbsent(chainName, new LinkedList<>());
+            if (chain == null) {
+                chain = chainHolder.get(chainName);
+            }
             if (!chain.contains(handler)) {
                 chain.add(handler);
             }
@@ -32,6 +35,9 @@ public abstract class AbstractPayCallbackHandler<T> {
 
     protected void doChain(Object object) {
         LinkedList<AbstractPayCallbackHandler> chain = chainHolder.putIfAbsent(this.getChainName(), new LinkedList<>());
+        if (chain == null) {
+            chain = chainHolder.get(this.getChainName());
+        }
         int i = chain.indexOf(this);
         if (chain.size() > i + 1) {
             chain.get(i + 1).handle(object);
@@ -44,6 +50,9 @@ public abstract class AbstractPayCallbackHandler<T> {
 
     public static Object doFirstChain(Object object, String chainName) {
         LinkedList<AbstractPayCallbackHandler> chain = chainHolder.putIfAbsent(chainName, new LinkedList<>());
+        if (chain == null) {
+            chain = chainHolder.get(chainName);
+        }
         return chain.get(0).handle(object);
     }
 
