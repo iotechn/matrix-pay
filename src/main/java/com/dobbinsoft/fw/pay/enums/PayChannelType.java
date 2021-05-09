@@ -28,4 +28,14 @@ public enum PayChannelType {
     public String getMsg() {
         return this.msg;
     }
+
+    public static PayChannelType getByCode(String code) {
+        for (PayChannelType type : values()) {
+            if (type.getCode().equals(code)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
 }

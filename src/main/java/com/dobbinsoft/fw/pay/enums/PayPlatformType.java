@@ -27,4 +27,13 @@ public enum PayPlatformType {
     public String getMsg() {
         return this.msg;
     }
+
+    public static PayPlatformType getByCode(int code) {
+        for (PayPlatformType type : values()) {
+            if (type.getCode() == code) {
+                return type;
+            }
+        }
+        return null;
+    }
 }
