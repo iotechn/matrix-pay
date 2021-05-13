@@ -181,7 +181,7 @@ public class WxPayServiceImpl implements PayService {
             payOrderNotifyResult.setCashFeeType(wxPayOrderNotifyResult.getCashFeeType());
             payOrderNotifyResult.setCouponFee(wxPayOrderNotifyResult.getCouponFee());
             payOrderNotifyResult.setCouponCount(wxPayOrderNotifyResult.getCouponCount());
-            if (wxPayOrderNotifyResult.getCouponCount() > 0) {
+            if (wxPayOrderNotifyResult.getCouponCount() != null && wxPayOrderNotifyResult.getCouponCount() > 0) {
                 List<PayOrderNotifyCoupon> list = wxPayOrderNotifyResult.getCouponList().stream().map(item -> {
                     PayOrderNotifyCoupon coupon = new PayOrderNotifyCoupon();
                     coupon.setCouponFee(item.getCouponFee());

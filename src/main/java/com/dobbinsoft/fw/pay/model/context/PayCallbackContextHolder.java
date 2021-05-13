@@ -12,6 +12,13 @@ public class PayCallbackContextHolder {
         threadLocal.set(context);
     }
 
+    public static void setPayId(String payId) {
+        PayCallbackContext context = threadLocal.get();
+        if (context != null) {
+            context.setPayId(payId);
+        }
+    }
+
     public static void clear() {
         threadLocal.remove();
     }

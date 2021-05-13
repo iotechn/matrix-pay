@@ -8,4 +8,9 @@ public class PayCallbackContext {
 
     private PayChannelType payChannelType;
 
+    /**
+     * 支付流水号
+     */
+    private String payId;
+
 }

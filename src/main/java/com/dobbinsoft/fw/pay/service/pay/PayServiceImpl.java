@@ -71,6 +71,7 @@ public class PayServiceImpl implements PayService {
             payCallbackContext.setPayChannelType(PayChannelType.ALI);
             PayCallbackContextHolder.set(payCallbackContext);
             result = aliPayService.checkSign(map);
+            PayCallbackContextHolder.setPayId(result.getTransactionId());
             result.setPayChannelType(PayChannelType.ALI);
         } else {
             ServletInputStream is = null;
@@ -80,9 +81,10 @@ public class PayServiceImpl implements PayService {
                 is.read(bytes);
                 String str = new String(bytes);
                 PayCallbackContext payCallbackContext = new PayCallbackContext();
-                payCallbackContext.setPayChannelType(PayChannelType.ALI);
+                payCallbackContext.setPayChannelType(PayChannelType.WX);
                 PayCallbackContextHolder.set(payCallbackContext);
                 result = wxPayService.checkSign(str);
+                PayCallbackContextHolder.setPayId(result.getTransactionId());
                 result.setPayChannelType(PayChannelType.WX);
             } catch (IOException e) {
                 throw new PayServiceException("支付回调，网络异常");
