@@ -98,6 +98,7 @@ public class WxPayServiceImpl implements PayService {
         refundRequest.setOutRefundNo(entity.getOutRefundNo());
         refundRequest.setTotalFee(entity.getTotalFee());
         refundRequest.setRefundFeeType(entity.getRefundFeeType());
+        refundRequest.setRefundFee(entity.getRefundFee());
         refundRequest.setOpUserId(entity.getOpUserId());
         refundRequest.setRefundAccount(entity.getRefundAccount());
         refundRequest.setRefundDesc(entity.getRefundDesc());
