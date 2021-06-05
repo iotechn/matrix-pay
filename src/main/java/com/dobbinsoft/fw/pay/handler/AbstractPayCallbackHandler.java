@@ -1,5 +1,8 @@
 package com.dobbinsoft.fw.pay.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -13,6 +16,8 @@ import java.util.Map;
  */
 public abstract class AbstractPayCallbackHandler<T> {
 
+    private static final Logger logger = LoggerFactory.getLogger(AbstractPayCallbackHandler.class);
+
     public static final String DEFAULT_CHAIN = "DEFAULT_CHAIN";
 
     public static Map<String, LinkedList<AbstractPayCallbackHandler>> chainHolder = new HashMap<>();
@@ -23,6 +28,7 @@ public abstract class AbstractPayCallbackHandler<T> {
 
     public static void append(AbstractPayCallbackHandler handler, String chainName) {
         synchronized (chainHolder) {
+            logger.info("[支付回调责任链] 添加成功； Group=" + DEFAULT_CHAIN + " ;Handler=" + handler.getClass().getName());
             LinkedList<AbstractPayCallbackHandler> chain = chainHolder.putIfAbsent(chainName, new LinkedList<>());
             if (chain == null) {
                 chain = chainHolder.get(chainName);
