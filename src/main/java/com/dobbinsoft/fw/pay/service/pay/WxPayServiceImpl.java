@@ -2,20 +2,24 @@ package com.dobbinsoft.fw.pay.service.pay;
 
 import com.dobbinsoft.fw.pay.config.PayProperties;
 import com.dobbinsoft.fw.pay.exception.PayServiceException;
+import com.dobbinsoft.fw.pay.model.request.PayFace2FaceRequest;
 import com.dobbinsoft.fw.pay.model.request.PayRefundRequest;
 import com.dobbinsoft.fw.pay.model.request.PayUnifiedOrderRequest;
-import com.dobbinsoft.fw.pay.model.result.PayOrderNotifyCoupon;
-import com.dobbinsoft.fw.pay.model.result.PayOrderNotifyResult;
-import com.dobbinsoft.fw.pay.model.result.PayRefundCouponInfo;
-import com.dobbinsoft.fw.pay.model.result.PayRefundResult;
+import com.dobbinsoft.fw.pay.model.result.*;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
+import com.github.binarywang.wxpay.bean.request.WxPayMicropayRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.WxPayMicropayResult;
 import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
+import org.apache.commons.beanutils.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +31,8 @@ import java.util.stream.Collectors;
  * @date: 2021-04-22
  */
 public class WxPayServiceImpl implements PayService {
+
+    private static final Logger logger = LoggerFactory.getLogger(WxPayServiceImpl.class);
 
     private WxPayService wxPayService;
 
@@ -149,6 +155,23 @@ public class WxPayServiceImpl implements PayService {
     }
 
     @Override
+    public PayFace2FaceResult createFaceToFace(PayFace2FaceRequest request) throws PayServiceException {
+        WxPayMicropayRequest wxPayMicropayRequest = new WxPayMicropayRequest();
+        try {
+            BeanUtils.copyProperties(wxPayMicropayRequest, request);
+            WxPayMicropayResult microPayResult = wxPayService.micropay(wxPayMicropayRequest);
+            PayFace2FaceResult payFace2FaceResult = new PayFace2FaceResult();
+            BeanUtils.copyProperties(payFace2FaceResult, microPayResult);
+            return payFace2FaceResult;
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            logger.error("[微信当面付] 异常", e);
+            throw new PayServiceException("支付未知异常");
+        } catch (WxPayException e) {
+            throw new PayServiceException(e.getMessage());
+        }
+    }
+
+    @Override
     public PayOrderNotifyResult checkSign(Object request) throws PayServiceException {
         String body = (String) request;
         try {
@@ -166,7 +189,6 @@ public class WxPayServiceImpl implements PayService {
             payOrderNotifyResult.setNonceStr(wxPayOrderNotifyResult.getNonceStr());
             payOrderNotifyResult.setSign(wxPayOrderNotifyResult.getSign());
             payOrderNotifyResult.setXmlString(wxPayOrderNotifyResult.getXmlString());
-
             payOrderNotifyResult.setPromotionDetail(wxPayOrderNotifyResult.getPromotionDetail());
             payOrderNotifyResult.setDeviceInfo(wxPayOrderNotifyResult.getDeviceInfo());
             payOrderNotifyResult.setOpenid(wxPayOrderNotifyResult.getOpenid());

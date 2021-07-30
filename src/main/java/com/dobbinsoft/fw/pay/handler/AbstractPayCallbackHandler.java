@@ -28,7 +28,7 @@ public abstract class AbstractPayCallbackHandler<T> {
 
     public static void append(AbstractPayCallbackHandler handler, String chainName) {
         synchronized (chainHolder) {
-            logger.info("[支付回调责任链] 添加成功； Group=" + DEFAULT_CHAIN + " ;Handler=" + handler.getClass().getName());
+            logger.info("[支付回调责任链] 添加成功； Group=" + chainName + " ;Handler=" + handler.getClass().getName());
             LinkedList<AbstractPayCallbackHandler> chain = chainHolder.putIfAbsent(chainName, new LinkedList<>());
             if (chain == null) {
                 chain = chainHolder.get(chainName);

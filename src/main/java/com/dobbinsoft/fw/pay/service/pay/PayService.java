@@ -1,8 +1,10 @@
 package com.dobbinsoft.fw.pay.service.pay;
 
 import com.dobbinsoft.fw.pay.exception.PayServiceException;
+import com.dobbinsoft.fw.pay.model.request.PayFace2FaceRequest;
 import com.dobbinsoft.fw.pay.model.request.PayRefundRequest;
 import com.dobbinsoft.fw.pay.model.request.PayUnifiedOrderRequest;
+import com.dobbinsoft.fw.pay.model.result.PayFace2FaceResult;
 import com.dobbinsoft.fw.pay.model.result.PayOrderNotifyResult;
 import com.dobbinsoft.fw.pay.model.result.PayRefundResult;
 
@@ -30,6 +32,15 @@ public interface PayService {
      * @throws PayServiceException
      */
     public PayRefundResult refundOrder(PayRefundRequest entity) throws PayServiceException;
+
+    /**
+     * 当面支付订单
+     * @param request
+     * @return
+     * @throws PayServiceException
+     */
+    public PayFace2FaceResult createFaceToFace(PayFace2FaceRequest request) throws PayServiceException;
+
 
     /**
      * 回调验签
