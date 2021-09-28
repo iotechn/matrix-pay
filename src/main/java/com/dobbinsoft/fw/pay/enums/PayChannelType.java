@@ -2,7 +2,7 @@ package com.dobbinsoft.fw.pay.enums;
 
 /**
  * ClassName: PayChannel
- * Description: TODO
+ * Description: 支付渠道类型枚举
  *
  * @author: e-weichaozheng
  * @date: 2021-04-20

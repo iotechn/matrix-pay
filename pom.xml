@@ -29,14 +29,6 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
         <!-- 微信第三方封装Api -->
         <dependency>
             <groupId>com.github.binarywang</groupId>
@@ -63,6 +55,15 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Lombok 支持 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.4</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
 

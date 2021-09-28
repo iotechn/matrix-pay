@@ -3,7 +3,7 @@ package com.dobbinsoft.fw.pay.model.result;
 import lombok.Data;
 
 @Data
-public class PayFace2FaceResult extends BasePayResult {
+public class PayMicropayResult extends BasePayResult {
 
     /**
      * <pre>

@@ -9,10 +9,9 @@ import com.alipay.easysdk.payment.facetoface.models.AlipayTradePrecreateResponse
 import com.dobbinsoft.fw.pay.config.PayProperties;
 import com.dobbinsoft.fw.pay.enums.PayPlatformType;
 import com.dobbinsoft.fw.pay.exception.PayServiceException;
-import com.dobbinsoft.fw.pay.model.request.PayFace2FaceRequest;
-import com.dobbinsoft.fw.pay.model.request.PayRefundRequest;
-import com.dobbinsoft.fw.pay.model.request.PayUnifiedOrderRequest;
-import com.dobbinsoft.fw.pay.model.result.PayFace2FaceResult;
+import com.dobbinsoft.fw.pay.model.request.*;
+import com.dobbinsoft.fw.pay.model.result.MatrixPayRefundResult;
+import com.dobbinsoft.fw.pay.model.result.PayMicropayResult;
 import com.dobbinsoft.fw.pay.model.result.PayOrderNotifyResult;
 import com.dobbinsoft.fw.pay.model.result.PayRefundResult;
 import org.slf4j.Logger;
@@ -28,7 +27,7 @@ import java.util.Map;
  * @author: e-weichaozheng
  * @date: 2021-04-22
  */
-public class AliPayServiceImpl implements PayService {
+public class AliPayServiceImpl implements MatrixPayService {
 
     private static final Logger logger = LoggerFactory.getLogger(AliPayServiceImpl.class);
 
@@ -47,7 +46,7 @@ public class AliPayServiceImpl implements PayService {
     }
 
     @Override
-    public Object createOrder(PayUnifiedOrderRequest entity) throws PayServiceException {
+    public Object createOrder(MatrixPayUnifiedOrderRequest entity) throws PayServiceException {
         this.config.appId = entity.getAppid();
         Factory.setOptions(this.config);
         try {
@@ -68,12 +67,12 @@ public class AliPayServiceImpl implements PayService {
     }
 
     @Override
-    public PayRefundResult refundOrder(PayRefundRequest entity) throws PayServiceException {
+    public MatrixPayRefundResult refund(MatrixPayRefundRequest entity) throws PayServiceException {
         this.config.appId = entity.getAppid();
         try {
             AlipayTradeRefundResponse response =
                     Factory.Payment.Common().refund(entity.getOutTradeNo(), fenToYuan(entity.getRefundFee()));
-            PayRefundResult result = new PayRefundResult();
+            MatrixPayRefundResult result = new MatrixPayRefundResult();
             result.setAppid(this.config.appId);
             result.setRefundFee(yuanToFen(response.refundFee));
             result.setTransactionId(response.tradeNo);
@@ -88,11 +87,11 @@ public class AliPayServiceImpl implements PayService {
     }
 
     @Override
-    public PayFace2FaceResult createFaceToFace(PayFace2FaceRequest request) throws PayServiceException {
+    public PayMicropayResult micropay(PayFace2FaceRequest request) throws PayServiceException {
         this.config.appId = request.getAppid();
         try {
             AlipayTradePrecreateResponse response = Factory.Payment.FaceToFace().preCreate(request.getBody(), request.getOutTradeNo(), fenToYuan(request.getTotalFee()));
-            PayFace2FaceResult result = new PayFace2FaceResult();
+            PayMicropayResult result = new PayMicropayResult();
             result.setAppid(this.config.appId);
 //        result.setTransactionId(response.get);
             result.setOutTradeNo(response.getOutTradeNo());
