@@ -1,6 +1,6 @@
 package com.dobbinsoft.fw.pay.handler;
 
-import com.dobbinsoft.fw.pay.model.result.PayOrderNotifyResult;
+import com.dobbinsoft.fw.pay.model.notify.MatrixPayOrderNotifyResult;
 
 /**
  * ClassName: AbstractPayCallbackHandler
@@ -16,6 +16,6 @@ public interface PayCallbackHandler {
      * @param result
      * @return
      */
-    public abstract Object handle(PayOrderNotifyResult result);
+    public abstract Object handle(MatrixPayOrderNotifyResult result);
 
 }

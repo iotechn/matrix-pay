@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class MatrixPayException extends Exception {
+public class MatrixPayException extends RuntimeException {
   private static final long serialVersionUID = 2214381471513460742L;
 
   /**

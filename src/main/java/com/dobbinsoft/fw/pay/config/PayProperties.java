@@ -23,10 +23,20 @@ public interface PayProperties {
 
     public String getAliGateway();
 
-    public String getAliMchPrivateKey();
+    public String getAliMiniAppId();
 
-    public String getAliAliPublicKey();
+    public String getAliMchMiniPrivateKey();
 
-    public String getAliNotifyUrl();
+    public String getAliAliMiniPublicKey();
+
+    public String getAliMiniNotifyUrl();
+
+    public String getAliAppAppId();
+
+    public String getAliMchAppPrivateKey();
+
+    public String getAliAliAppPublicKey();
+
+    public String getAliAppNotifyUrl();
 
 }

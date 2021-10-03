@@ -1,5 +1,6 @@
 package com.dobbinsoft.fw.pay.model.result;
 
+import com.dobbinsoft.fw.pay.enums.PayChannelType;
 import com.dobbinsoft.fw.pay.exception.MatrixPayException;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.service.WxPayService;
@@ -38,6 +39,11 @@ import java.util.Map;
  */
 @Data
 public abstract class MatrixBasePayResult implements Serializable {
+
+    /**
+     * 支付渠道
+     */
+    private PayChannelType payChannelType;
     /**
      * 返回状态码.
      */

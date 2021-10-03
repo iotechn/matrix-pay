@@ -11,6 +11,8 @@ public class PayNotifyResponse {
         PayCallbackContext payCallbackContext = PayCallbackContextHolder.get();
         if (payCallbackContext.getPayChannelType() == PayChannelType.WX) {
             return WxPayNotifyResponse.success(msg);
+        } else if (payCallbackContext.getPayChannelType() == PayChannelType.ALI) {
+            return "ok";
         }
         throw new RuntimeException("待完善");
     }
@@ -19,6 +21,8 @@ public class PayNotifyResponse {
         PayCallbackContext payCallbackContext = PayCallbackContextHolder.get();
         if (payCallbackContext.getPayChannelType() == PayChannelType.WX) {
             return WxPayNotifyResponse.fail(msg);
+        } else if (payCallbackContext.getPayChannelType() == PayChannelType.ALI) {
+            throw new RuntimeException(msg);
         }
         throw new RuntimeException("待完善");
     }

@@ -2,20 +2,23 @@ package com.dobbinsoft.fw.pay.service.pay;
 
 import com.dobbinsoft.fw.pay.config.PayProperties;
 import com.dobbinsoft.fw.pay.enums.PayChannelType;
+import com.dobbinsoft.fw.pay.exception.MatrixPayException;
 import com.dobbinsoft.fw.pay.exception.PayServiceException;
 import com.dobbinsoft.fw.pay.model.context.PayCallbackContext;
 import com.dobbinsoft.fw.pay.model.context.PayCallbackContextHolder;
-import com.dobbinsoft.fw.pay.model.request.MatrixPayUnifiedOrderRequest;
-import com.dobbinsoft.fw.pay.model.request.PayFace2FaceRequest;
-import com.dobbinsoft.fw.pay.model.request.PayRefundRequest;
-import com.dobbinsoft.fw.pay.model.request.PayUnifiedOrderRequest;
-import com.dobbinsoft.fw.pay.model.result.PayMicropayResult;
-import com.dobbinsoft.fw.pay.model.result.PayOrderNotifyResult;
-import com.dobbinsoft.fw.pay.model.result.PayRefundResult;
+import com.dobbinsoft.fw.pay.model.coupon.*;
+import com.dobbinsoft.fw.pay.model.notify.MatrixPayOrderNotifyResult;
+import com.dobbinsoft.fw.pay.model.notify.MatrixPayRefundNotifyResult;
+import com.dobbinsoft.fw.pay.model.notify.MatrixScanPayNotifyResult;
+import com.dobbinsoft.fw.pay.model.request.*;
+import com.dobbinsoft.fw.pay.model.result.*;
+import com.github.binarywang.wxpay.bean.WxPayApiData;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,31 +52,216 @@ public class MatrixPayServiceImpl implements MatrixPayService {
     }
 
     @Override
-    public PayRefundResult refund(PayRefundRequest entity) throws PayServiceException {
-        if (entity.getPayChannel() == PayChannelType.ALI) {
-            return this.aliPayService.refund(entity);
-        } else if (entity.getPayChannel() == PayChannelType.WX) {
-            return this.wxPayService.refund(entity);
+    public MatrixEntPayService getEntPayService() {
+        return null;
+    }
+
+    @Override
+    public void setEntPayService(MatrixEntPayService entPayService) {
+
+    }
+
+    @Override
+    public MatrixPayOrderQueryResult queryOrder(String transactionId, String outTradeNo) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayOrderQueryResult queryOrder(MatrixPayOrderQueryRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayOrderCloseResult closeOrder(String outTradeNo) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayOrderCloseResult closeOrder(MatrixPayOrderCloseRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayUnifiedOrderResult unifiedOrder(MatrixPayUnifiedOrderRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayRefundResult refund(MatrixPayRefundRequest request) throws MatrixPayException {
+        if (request.getPayChannel() == PayChannelType.ALI) {
+            return this.aliPayService.refund(request);
+        } else if (request.getPayChannel() == PayChannelType.WX) {
+            return this.wxPayService.refund(request);
         } else {
             throw new PayServiceException("支付渠道不支持");
         }
     }
 
     @Override
-    public PayMicropayResult micropay(PayFace2FaceRequest entity) throws PayServiceException {
-        if (entity.getPayChannel() == PayChannelType.ALI) {
-            return this.aliPayService.micropay(entity);
-        } else if (entity.getPayChannel() == PayChannelType.WX) {
-            return this.wxPayService.micropay(entity);
+    public MatrixPayRefundQueryResult refundQuery(String transactionId, String outTradeNo, String outRefundNo, String refundId) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayRefundQueryResult refundQuery(MatrixPayRefundQueryRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayOrderNotifyResult parseOrderNotifyResult(String xmlData) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayRefundNotifyResult parseRefundNotifyResult(String xmlData) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixScanPayNotifyResult parseScanPayNotifyResult(String xmlData) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPaySendRedpackResult sendRedpack(MatrixPaySendRedpackRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayRedpackQueryResult queryRedpack(String mchBillNo) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayRedpackQueryResult queryRedpack(MatrixPayRedpackQueryRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public byte[] createScanPayQrcodeMode1(String productId, File logoFile, Integer sideLength) {
+        return new byte[0];
+    }
+
+    @Override
+    public String createScanPayQrcodeMode1(String productId) {
+        return null;
+    }
+
+    @Override
+    public byte[] createScanPayQrcodeMode2(String codeUrl, File logoFile, Integer sideLength) {
+        return new byte[0];
+    }
+
+    @Override
+    public void report(MatrixPayReportRequest request) throws MatrixPayException {
+
+    }
+
+    @Override
+    public String downloadRawBill(String billDate, String billType, String tarType, String deviceInfo) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public String downloadRawBill(MatrixPayDownloadBillRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayBillResult downloadBill(String billDate, String billType, String tarType, String deviceInfo) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayBillResult downloadBill(MatrixPayDownloadBillRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayFundFlowResult downloadFundFlow(String billDate, String accountType, String tarType) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayFundFlowResult downloadFundFlow(MatrixPayDownloadFundFlowRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayMicropayResult micropay(MatrixPayMicropayRequest request) throws MatrixPayException {
+        if (request.getPayChannel() == PayChannelType.ALI) {
+            return this.aliPayService.micropay(request);
+        } else if (request.getPayChannel() == PayChannelType.WX) {
+            return this.wxPayService.micropay(request);
         } else {
             throw new PayServiceException("支付渠道不支持");
         }
     }
 
     @Override
-    public PayOrderNotifyResult checkSign(Object obj) throws PayServiceException {
+    public MatrixPayOrderReverseResult reverseOrder(MatrixPayOrderReverseRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public String shorturl(MatrixPayShorturlRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public String shorturl(String longUrl) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public String authcode2Openid(MatrixPayAuthcode2OpenidRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public String authcode2Openid(String authCode) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public String getSandboxSignKey() throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayCouponSendResult sendCoupon(MatrixPayCouponSendRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayCouponStockQueryResult queryCouponStock(MatrixPayCouponStockQueryRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayCouponInfoQueryResult queryCouponInfo(MatrixPayCouponInfoQueryRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public WxPayApiData getWxApiData() {
+        return null;
+    }
+
+    @Override
+    public String queryComment(Date beginDate, Date endDate, Integer offset, Integer limit) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public String queryComment(MatrixPayQueryCommentRequest request) throws MatrixPayException {
+        return null;
+    }
+
+    @Override
+    public MatrixPayOrderNotifyResult checkSign(Object obj) throws MatrixPayException {
         HttpServletRequest servletRequest = (HttpServletRequest) obj;
-        PayOrderNotifyResult result;
+        MatrixPayOrderNotifyResult result;
         if ("RSA2".equals(servletRequest.getParameter("sign_type"))) {
             // 支付宝依据
             Map<String, String> map = new HashMap<>();

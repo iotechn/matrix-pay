@@ -1,6 +1,7 @@
 package com.dobbinsoft.fw.pay.model.notify;
 
-import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
+import com.dobbinsoft.fw.pay.exception.MatrixPayException;
+import com.dobbinsoft.fw.pay.model.result.MatrixBasePayResult;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.converter.WxPayOrderNotifyResultConverter;
 import com.github.binarywang.wxpay.exception.WxPayException;
@@ -26,7 +27,7 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class MatrixPayOrderNotifyResult extends BaseWxPayResult {
+public class MatrixPayOrderNotifyResult extends MatrixBasePayResult {
     private static final long serialVersionUID = 5389718115223345496L;
 
     /**
@@ -267,10 +268,10 @@ public class MatrixPayOrderNotifyResult extends BaseWxPayResult {
     private String version;
 
     @Override
-    public void checkResult(WxPayService wxPayService, String signType, boolean checkSuccess) throws WxPayException {
+    public void checkResult(WxPayService wxPayService, String signType, boolean checkSuccess) throws MatrixPayException {
         //防止伪造成功通知
         if (WxPayConstants.ResultCode.SUCCESS.equals(getReturnCode()) && getSign() == null) {
-            throw new WxPayException("伪造的通知！");
+            throw new MatrixPayException("伪造的通知！");
         }
 
         super.checkResult(wxPayService, signType, checkSuccess);
