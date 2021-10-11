@@ -39,4 +39,12 @@ public interface PayProperties {
 
     public String getAliAppNotifyUrl();
 
+    public String getAliWebAppId();
+
+    public String getAliMchWebPrivateKey();
+
+    public String getAliAliWebPublicKey();
+
+    public String getAliWebNotifyUrl();
+
 }

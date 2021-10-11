@@ -40,6 +40,10 @@ public class MatrixPayServiceImpl implements MatrixPayService {
         this.wxPayService = new WxPayServiceImpl(payProperties);
     }
 
+    public void init() {
+        this.aliPayService.init();
+    }
+
     @Override
     public Object createOrder(MatrixPayUnifiedOrderRequest entity) throws PayServiceException {
         if (entity.getPayChannel() == PayChannelType.ALI) {

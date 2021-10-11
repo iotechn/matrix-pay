@@ -6,6 +6,8 @@ import com.alipay.easysdk.payment.app.models.AlipayTradeAppPayResponse;
 import com.alipay.easysdk.payment.common.models.AlipayTradeCreateResponse;
 import com.alipay.easysdk.payment.common.models.AlipayTradeRefundResponse;
 import com.alipay.easysdk.payment.facetoface.models.AlipayTradePrecreateResponse;
+import com.alipay.easysdk.payment.page.models.AlipayTradePagePayResponse;
+import com.dobbinsoft.fw.pay.client.AliClient;
 import com.dobbinsoft.fw.pay.config.PayProperties;
 import com.dobbinsoft.fw.pay.enums.PayPlatformType;
 import com.dobbinsoft.fw.pay.exception.MatrixPayException;
@@ -38,16 +40,18 @@ public class AliPayServiceImpl implements MatrixPayService {
 
     private static final Logger logger = LoggerFactory.getLogger(AliPayServiceImpl.class);
 
-    private Map<String, Config> configMap = new HashMap<>();
+    private Map<String, AliClient> configMap = new HashMap<>();
 
     private PayProperties payProperties;
 
-    // TODO 这个地方 new的对象，无法获取动态配置，需要解决
     public AliPayServiceImpl(PayProperties payProperties) {
         this.payProperties = payProperties;
     }
 
-    private void init() {
+    /**
+     * 由配置到IoC中时，由ioc框架调用
+     */
+    public void init() {
         if (configMap.get(payProperties.getAliMiniAppId()) == null && StringUtils.isNotBlank(payProperties.getAliMiniAppId())) {
             Config configMini = new Config();
             configMini.protocol = "https";
@@ -57,7 +61,7 @@ public class AliPayServiceImpl implements MatrixPayService {
             configMini.merchantPrivateKey = payProperties.getAliMchMiniPrivateKey();
             configMini.alipayPublicKey = payProperties.getAliAliMiniPublicKey();
             configMini.notifyUrl = payProperties.getAliMiniNotifyUrl();
-            this.configMap.put(payProperties.getAliMiniAppId(), configMini);
+            this.configMap.put(payProperties.getAliMiniAppId(), new AliClient(configMini));
         }
         if (configMap.get(payProperties.getAliAppAppId()) == null && StringUtils.isNotBlank(payProperties.getAliAppAppId())) {
             Config configApp = new Config();
@@ -68,22 +72,35 @@ public class AliPayServiceImpl implements MatrixPayService {
             configApp.merchantPrivateKey = payProperties.getAliMchAppPrivateKey();
             configApp.alipayPublicKey = payProperties.getAliAliAppPublicKey();
             configApp.notifyUrl = payProperties.getAliAppNotifyUrl();
-            this.configMap.put(payProperties.getAliAppAppId(), configApp);
+            this.configMap.put(payProperties.getAliAppAppId(), new AliClient(configApp));
+        }
+        if (configMap.get(payProperties.getAliWebAppId()) == null && StringUtils.isNotBlank(payProperties.getAliWebAppId())) {
+            Config configWeb = new Config();
+            configWeb.protocol = "https";
+            configWeb.appId = payProperties.getAliWebAppId();
+            configWeb.gatewayHost = payProperties.getAliGateway();
+            configWeb.signType = "RSA2";
+            configWeb.merchantPrivateKey = payProperties.getAliMchWebPrivateKey();
+            configWeb.alipayPublicKey = payProperties.getAliAliWebPublicKey();
+            configWeb.notifyUrl = payProperties.getAliWebNotifyUrl();
+            this.configMap.put(payProperties.getAliWebAppId(), new AliClient(configWeb));
         }
     }
 
     @Override
     public Object createOrder(MatrixPayUnifiedOrderRequest entity) throws PayServiceException {
-        this.init();
-        Config config = configMap.get(entity.getAppid());
-        Factory.setOptions(config);
+        AliClient aliClient = configMap.get(entity.getAppid());
         try {
             if (entity.getPayPlatform() == PayPlatformType.APP) {
-                AlipayTradeAppPayResponse appPayResponse = Factory.Payment.App()
+                AlipayTradeAppPayResponse appPayResponse = aliClient.payment.App()
                         .pay(entity.getBody(), entity.getOutTradeNo(), this.fenToYuan(entity.getTotalFee()));
                 return appPayResponse.body;
+            } else if (entity.getPayPlatform() == PayPlatformType.WEB) {
+                AlipayTradePagePayResponse pagePayResponse = aliClient.payment.Page()
+                        .pay(entity.getBody(), entity.getOutTradeNo(), this.fenToYuan(entity.getTotalFee()), entity.getReturnUrl());
+                return pagePayResponse.body;
             } else {
-                AlipayTradeCreateResponse alipayTradeCreateResponse = Factory.Payment.Common().create(entity.getBody(),
+                AlipayTradeCreateResponse alipayTradeCreateResponse = aliClient.payment.Common().create(entity.getBody(),
                         entity.getOutTradeNo(),
                         this.fenToYuan(entity.getTotalFee()), entity.getOpenid());
                 return alipayTradeCreateResponse;
@@ -131,11 +148,10 @@ public class AliPayServiceImpl implements MatrixPayService {
 
     @Override
     public MatrixPayRefundResult refund(MatrixPayRefundRequest entity) throws PayServiceException {
-        Config config = configMap.get(entity.getAppid());
-        Factory.setOptions(config);
+        AliClient aliClient = configMap.get(entity.getAppid());
         try {
             AlipayTradeRefundResponse response =
-                    Factory.Payment.Common().refund(entity.getOutTradeNo(), fenToYuan(entity.getRefundFee()));
+                    aliClient.payment.Common().refund(entity.getOutTradeNo(), fenToYuan(entity.getRefundFee()));
             MatrixPayRefundResult result = new MatrixPayRefundResult();
             result.setAppid(entity.getAppid());
             result.setRefundFee(yuanToFen(response.refundFee));
@@ -242,10 +258,9 @@ public class AliPayServiceImpl implements MatrixPayService {
 
     @Override
     public MatrixPayMicropayResult micropay(MatrixPayMicropayRequest request) throws MatrixPayException {
-        Config config = configMap.get(request.getAppid());
-        Factory.setOptions(config);
+        AliClient aliClient = configMap.get(request.getAppid());
         try {
-            AlipayTradePrecreateResponse response = Factory.Payment.FaceToFace().preCreate(request.getBody(), request.getOutTradeNo(), fenToYuan(request.getTotalFee()));
+            AlipayTradePrecreateResponse response = aliClient.payment.FaceToFace().preCreate(request.getBody(), request.getOutTradeNo(), fenToYuan(request.getTotalFee()));
             MatrixPayMicropayResult result = new MatrixPayMicropayResult();
             result.setAppid(request.getAppid());
 //        result.setTransactionId(response.get);
@@ -323,7 +338,8 @@ public class AliPayServiceImpl implements MatrixPayService {
     public MatrixPayOrderNotifyResult checkSign(Object request) throws MatrixPayException {
         try {
             Map<String, String> map = (Map<String, String>) request;
-            Factory.Payment.Common().verifyNotify(map);
+            AliClient aliClient = configMap.get(map.get("app_id"));
+            aliClient.payment.Common().verifyNotify(map);
             MatrixPayOrderNotifyResult result = new MatrixPayOrderNotifyResult();
             result.setOpenid(map.get("buyer_id"));
             result.setTotalFee(yuanToFen(map.get("invoice_amount")));

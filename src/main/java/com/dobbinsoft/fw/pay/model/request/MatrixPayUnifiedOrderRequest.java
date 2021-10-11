@@ -318,6 +318,15 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
     private String fingerprint;
 
     /**
+     * <pre>
+     * 字段名：重定向地址
+     * 变量名：returnUrl
+     * 描述：Web支付成功后，
+     * </pre>
+     */
+    private String returnUrl;
+
+    /**
      * 如果配置中已经设置，可以不设置值.
      *
      * @param notifyUrl 支付回调通知地址
