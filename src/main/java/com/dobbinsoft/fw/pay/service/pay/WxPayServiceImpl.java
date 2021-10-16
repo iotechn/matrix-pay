@@ -430,7 +430,7 @@ public class WxPayServiceImpl implements MatrixPayService {
     @Override
     public MatrixPayMicropayResult micropay(MatrixPayMicropayRequest request) throws MatrixPayException {
         WxPayMicropayRequest wxPayMicropayRequest = new WxPayMicropayRequest();
-        MatrixBeanUtils.copyWxProperties(wxPayMicropayRequest, request);
+        MatrixBeanUtils.copyWxProperties(request, wxPayMicropayRequest);
         WxPayMicropayResult microPayResult = null;
         try {
             microPayResult = wxPayService.micropay(wxPayMicropayRequest);

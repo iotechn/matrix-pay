@@ -9,12 +9,9 @@ import com.dobbinsoft.fw.pay.model.notify.MatrixScanPayNotifyResult;
 import com.dobbinsoft.fw.pay.model.request.*;
 import com.dobbinsoft.fw.pay.model.result.*;
 import com.github.binarywang.wxpay.bean.WxPayApiData;
-import com.github.binarywang.wxpay.bean.request.WxPayReportRequest;
-import com.github.binarywang.wxpay.config.WxPayConfig;
 
 import java.io.File;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * <pre>

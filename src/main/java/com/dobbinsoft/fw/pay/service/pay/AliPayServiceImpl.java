@@ -3,8 +3,8 @@ package com.dobbinsoft.fw.pay.service.pay;
 import com.alipay.easysdk.factory.Factory;
 import com.alipay.easysdk.kernel.Config;
 import com.alipay.easysdk.payment.app.models.AlipayTradeAppPayResponse;
-import com.alipay.easysdk.payment.common.models.AlipayTradeCreateResponse;
-import com.alipay.easysdk.payment.common.models.AlipayTradeRefundResponse;
+import com.alipay.easysdk.payment.common.models.*;
+import com.alipay.easysdk.payment.facetoface.models.AlipayTradePayResponse;
 import com.alipay.easysdk.payment.facetoface.models.AlipayTradePrecreateResponse;
 import com.alipay.easysdk.payment.page.models.AlipayTradePagePayResponse;
 import com.dobbinsoft.fw.pay.client.AliClient;
@@ -25,9 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * ClassName: AliPayServiceImpl
@@ -106,7 +104,7 @@ public class AliPayServiceImpl implements MatrixPayService {
                 return alipayTradeCreateResponse;
             }
         } catch (Exception e) {
-            logger.info("[支付宝] 创建统一支付订单 异常 orderNo=" + entity.getOutTradeNo(), e);
+            logger.info("[支付宝] 创建统一支付订单 异常 outTradeNo=" + entity.getOutTradeNo(), e);
             throw new PayServiceException(e.getMessage());
         }
     }
@@ -123,31 +121,73 @@ public class AliPayServiceImpl implements MatrixPayService {
 
     @Override
     public MatrixPayOrderQueryResult queryOrder(String transactionId, String outTradeNo) throws MatrixPayException {
+        if (outTradeNo == null || "".equals(outTradeNo)) {
+            throw new MatrixPayException("支付宝仅支持outTradeNo查询");
+        }
+        Set<String> keys = this.configMap.keySet();
+        try {
+            for (String appId : keys) {
+                AliClient aliClient = configMap.get(appId);
+                AlipayTradeQueryResponse query = aliClient.payment.Common().query(outTradeNo);
+                if (query != null) {
+                    MatrixPayOrderQueryResult matrixPayOrderQueryResult = new MatrixPayOrderQueryResult();
+                    matrixPayOrderQueryResult.setAppid(appId);
+                    matrixPayOrderQueryResult.setOutTradeNo(query.getOutTradeNo());
+                    matrixPayOrderQueryResult.setTransactionId(query.getTradeNo());
+                    matrixPayOrderQueryResult.setOpenid(query.getBuyerUserId());
+                    matrixPayOrderQueryResult.setMchId(appId);
+                    matrixPayOrderQueryResult.setCashFee(yuanToFen(query.getTotalAmount()));
+                    matrixPayOrderQueryResult.setCashFeeType(query.getTransCurrency());
+                    String tradeStatus = query.getTradeStatus();
+                    matrixPayOrderQueryResult.setTradeState(toMatrixStatus(tradeStatus));
+                    return matrixPayOrderQueryResult;
+                }
+            }
+        } catch (Exception e) {
+            logger.info("[支付宝] 支付订单查询 异常 outTradeNo=" + outTradeNo, e);
+            throw new PayServiceException(e.getMessage());
+        }
         return null;
     }
 
     @Override
     public MatrixPayOrderQueryResult queryOrder(MatrixPayOrderQueryRequest request) throws MatrixPayException {
-        return null;
+        return this.queryOrder(request.getTransactionId(), request.getOutTradeNo());
     }
 
     @Override
     public MatrixPayOrderCloseResult closeOrder(String outTradeNo) throws MatrixPayException {
+        Set<String> keys = this.configMap.keySet();
+        try {
+            for (String appId : keys) {
+                AliClient aliClient = configMap.get(appId);
+                AlipayTradeCloseResponse response = aliClient.payment.Common().close(outTradeNo);
+                if (response != null) {
+                    MatrixPayOrderCloseResult matrixPayOrderCloseResult = new MatrixPayOrderCloseResult();
+                    matrixPayOrderCloseResult.setAppid(appId);
+                    matrixPayOrderCloseResult.setMchId(appId);
+                    return matrixPayOrderCloseResult;
+                }
+            }
+        } catch (Exception e) {
+            logger.info("[支付宝] 关闭订单 异常 outTradeNo=" + outTradeNo, e);
+            throw new PayServiceException(e.getMessage());
+        }
         return null;
     }
 
     @Override
     public MatrixPayOrderCloseResult closeOrder(MatrixPayOrderCloseRequest request) throws MatrixPayException {
-        return null;
+        return this.closeOrder(request.getOutTradeNo());
     }
 
     @Override
-    public MatrixPayUnifiedOrderResult unifiedOrder(MatrixPayUnifiedOrderRequest request) throws MatrixPayException {
-        return null;
+    public MatrixPayUnifiedOrderResult unifiedOrder(MatrixPayUnifiedOrderRequest entity) throws MatrixPayException {
+        throw new MatrixPayException("支付宝暂不支持统一下单");
     }
 
     @Override
-    public MatrixPayRefundResult refund(MatrixPayRefundRequest entity) throws PayServiceException {
+    public MatrixPayRefundResult refund(MatrixPayRefundRequest entity) throws MatrixPayException {
         AliClient aliClient = configMap.get(entity.getAppid());
         try {
             AlipayTradeRefundResponse response =
@@ -162,18 +202,40 @@ public class AliPayServiceImpl implements MatrixPayService {
             return result;
         } catch (Exception e) {
             logger.error("[支付宝] 创建退款单 异常 orderNo=" + entity.getOutTradeNo(), e);
-            throw new PayServiceException(e.getMessage());
+            throw new MatrixPayException(e.getMessage());
         }
     }
 
     @Override
     public MatrixPayRefundQueryResult refundQuery(String transactionId, String outTradeNo, String outRefundNo, String refundId) throws MatrixPayException {
+        if ((outTradeNo == null || "".equals(outTradeNo)) || (outRefundNo == null || "".equals(outRefundNo))) {
+            throw new MatrixPayException("支付宝仅支持 outTradeNo | outRefundNo 查询");
+        }
+        Set<String> strings = configMap.keySet();
+        try {
+            for (String appId : strings) {
+                AliClient aliClient = configMap.get(appId);
+                AlipayTradeFastpayRefundQueryResponse response = aliClient.payment.Common().queryRefund(outTradeNo, outRefundNo);
+                if (response != null) {
+                    MatrixPayRefundQueryResult result = new MatrixPayRefundQueryResult();
+                    result.setAppid(appId);
+                    result.setTransactionId(response.getTradeNo());
+                    result.setOutTradeNo(outTradeNo);
+                    result.setCashFee(yuanToFen(response.getTotalAmount()));
+                    // TODO
+                    return result;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("[支付宝] 退款单查询 异常 orderNo=" + outTradeNo, e);
+            throw new MatrixPayException(e.getMessage());
+        }
         return null;
     }
 
     @Override
     public MatrixPayRefundQueryResult refundQuery(MatrixPayRefundQueryRequest request) throws MatrixPayException {
-        return null;
+        return this.refundQuery(request.getTransactionId(), request.getOutTradeNo(), request.getOutRefundNo(), request.getRefundId());
     }
 
     @Override
@@ -260,15 +322,19 @@ public class AliPayServiceImpl implements MatrixPayService {
     public MatrixPayMicropayResult micropay(MatrixPayMicropayRequest request) throws MatrixPayException {
         AliClient aliClient = configMap.get(request.getAppid());
         try {
-            AlipayTradePrecreateResponse response = aliClient.payment.FaceToFace().preCreate(request.getBody(), request.getOutTradeNo(), fenToYuan(request.getTotalFee()));
+            AlipayTradePayResponse response = aliClient.payment.FaceToFace().pay(request.getBody(), request.getOutTradeNo(), fenToYuan(request.getTotalFee()), request.getAuthCode());
             MatrixPayMicropayResult result = new MatrixPayMicropayResult();
             result.setAppid(request.getAppid());
+            result.setTransactionId(response.getTradeNo());
 //        result.setTransactionId(response.get);
             result.setOutTradeNo(response.getOutTradeNo());
+            if (response.getCode().equals("10000")) {
+                return result;
+            }
+            throw new MatrixPayException(response.getMsg());
 //        result.setFeeType(response.getCur);
-            return result;
         } catch (Exception e) {
-            logger.error("[支付宝] 提交当面支付 异常 orderNo=" + request.getOutTradeNo());
+            logger.error("[支付宝] 提交当面支付 异常 outTradeNo=" + request.getOutTradeNo(), e);
             throw new PayServiceException(e.getMessage());
         }
     }
@@ -350,12 +416,23 @@ public class AliPayServiceImpl implements MatrixPayService {
             return result;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new PayServiceException(e.getMessage());
+            throw new MatrixPayException(e.getMessage());
         }
     }
 
     private String fenToYuan(Integer fen) {
         return "" + (fen / 100.0);
+    }
+
+    private String toMatrixStatus(String aliOrderStatus) {
+        if ("WAIT_BUYER_PAY".equals(aliOrderStatus)) {
+            return "NOTPAY";
+        } else if ("TRADE_CLOSED".equals(aliOrderStatus)) {
+            return "CLOSED";
+        } else if ("TRADE_SUCCESS".equals(aliOrderStatus) || "TRADE_FINISHED".equals(aliOrderStatus)) {
+            return "SUCCESS";
+        }
+        return null;
     }
 
     public static Integer yuanToFen(String yuan) {

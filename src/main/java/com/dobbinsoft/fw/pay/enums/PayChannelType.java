@@ -10,6 +10,7 @@ package com.dobbinsoft.fw.pay.enums;
 public enum PayChannelType {
     WX("WX", "微信支付"),
     ALI("ALI", "支付宝"),
+    YSF("YSF", "云闪付"),
     OFFLINE("OFFLINE", "线下支付"),
     ;
 

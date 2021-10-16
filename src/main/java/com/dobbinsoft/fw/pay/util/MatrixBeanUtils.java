@@ -47,9 +47,21 @@ public class MatrixBeanUtils {
         }
         Class<?> sourceClass = source.getClass();
         Class<?> targetClass = target.getClass();
-        Field[] sourceFields = sourceClass.getDeclaredFields();
-        Field[] targetFields = targetClass.getDeclaredFields();
-        Map<String, Field> targetMap = Arrays.stream(targetFields).collect(Collectors.toMap(Field::getName, v -> v));
+        List<Field> sourceFields = new ArrayList<>();
+        for (Field f : sourceClass.getDeclaredFields()) {
+            sourceFields.add(f);
+        }
+        for (Field f : sourceClass.getSuperclass().getDeclaredFields()) {
+            sourceFields.add(f);
+        }
+        List<Field> targetFields = new ArrayList<>();
+        for (Field f : targetClass.getDeclaredFields()) {
+            targetFields.add(f);
+        }
+        for (Field f : targetClass.getSuperclass().getDeclaredFields()) {
+            targetFields.add(f);
+        }
+        Map<String, Field> targetMap = targetFields.stream().collect(Collectors.toMap(Field::getName, v -> v));
         for (Field sourceField : sourceFields) {
             String name = sourceField.getName();
             Field targetField = targetMap.get(name);
