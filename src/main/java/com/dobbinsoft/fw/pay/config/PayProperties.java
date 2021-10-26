@@ -23,28 +23,14 @@ public interface PayProperties {
 
     public String getAliGateway();
 
-    public String getAliMiniAppId();
+    public String getAliAppId();
 
-    public String getAliMchMiniPrivateKey();
+    public String getAliMchPrivateKey();
 
-    public String getAliAliMiniPublicKey();
+    public String getAliAliPublicKey();
 
-    public String getAliMiniNotifyUrl();
+    public String getAliNotifyUrl();
 
-    public String getAliAppAppId();
-
-    public String getAliMchAppPrivateKey();
-
-    public String getAliAliAppPublicKey();
-
-    public String getAliAppNotifyUrl();
-
-    public String getAliWebAppId();
-
-    public String getAliMchWebPrivateKey();
-
-    public String getAliAliWebPublicKey();
-
-    public String getAliWebNotifyUrl();
+    /***************** 配置预热 将部分配置直接放入缓存 *********************/
 
 }

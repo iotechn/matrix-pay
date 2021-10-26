@@ -67,11 +67,4 @@ public class MatrixPayQueryCommentRequest extends MatrixBasePayRequest {
      */
     private Integer limit;
 
-    /**
-     * 检查约束情况.
-     */
-    @Override
-    protected void checkConstraints() throws WxPayException {
-    }
-
 }

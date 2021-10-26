@@ -18,8 +18,4 @@ import lombok.NoArgsConstructor;
 public class MatrixMatrixEntPayBankQueryRequest extends MatrixEntPayQueryRequest {
   private static final long serialVersionUID = -479088843124447119L;
 
-  @Override
-  protected boolean ignoreAppid() {
-    return true;
-  }
 }

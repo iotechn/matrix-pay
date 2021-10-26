@@ -1,6 +1,8 @@
 package com.dobbinsoft.fw.pay.service.pay;
 
 import com.dobbinsoft.fw.pay.config.PayProperties;
+import com.dobbinsoft.fw.pay.enums.PayChannelType;
+import com.dobbinsoft.fw.pay.enums.PayPlatformType;
 import com.dobbinsoft.fw.pay.exception.MatrixPayException;
 import com.dobbinsoft.fw.pay.exception.PayServiceException;
 import com.dobbinsoft.fw.pay.model.coupon.*;
@@ -23,12 +25,17 @@ import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.EntPayService;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.EntPayServiceImpl;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -60,6 +67,7 @@ public class WxPayServiceImpl implements MatrixPayService {
             }
         };
         EntPayService entPayService = new EntPayServiceImpl(this.wxPayService);
+        this.wxPayService.setEntPayService(entPayService);
     }
 
     @Override
@@ -74,6 +82,11 @@ public class WxPayServiceImpl implements MatrixPayService {
     }
 
     @Override
+    public void configWarmUp(List<PayProperties> list) {
+
+    }
+
+    @Override
     public MatrixEntPayService getEntPayService() {
         return matrixEntPayService;
     }
@@ -81,17 +94,6 @@ public class WxPayServiceImpl implements MatrixPayService {
     @Override
     public void setEntPayService(MatrixEntPayService entPayService) {
         this.matrixEntPayService = entPayService;
-    }
-
-    @Override
-    public MatrixPayOrderQueryResult queryOrder(String transactionId, String outTradeNo) throws MatrixPayException {
-        WxPayOrderQueryResult wxPayOrderQueryResult = null;
-        try {
-            wxPayOrderQueryResult = this.wxPayService.queryOrder(transactionId, outTradeNo);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-        return buildPayOrderQueryResult(wxPayOrderQueryResult);
     }
 
     @Override
@@ -123,19 +125,23 @@ public class WxPayServiceImpl implements MatrixPayService {
             }).collect(Collectors.toList());
             result.setCoupons(list);
         }
-        return result;
-    }
-
-    @Override
-    public MatrixPayOrderCloseResult closeOrder(String outTradeNo) throws MatrixPayException {
-        WxPayOrderCloseResult wxPayOrderCloseResult = null;
-        try {
-            wxPayOrderCloseResult = wxPayService.closeOrder(outTradeNo);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
+        result.setPayChannel(PayChannelType.WX);
+        String tradeType = wxPayOrderQueryResult.getTradeType();
+        // JSAPI，NATIVE，APP，MICROPAY，详细说明见参数规定
+        switch (tradeType) {
+            case "JSAPI":
+                result.setPayPlatform(PayPlatformType.MP);
+                break;
+            case "NATIVE":
+                result.setPayPlatform(PayPlatformType.WEB);
+                break;
+            case "APP":
+                result.setPayPlatform(PayPlatformType.APP);
+                break;
+            case "MICROPAY":
+                result.setPayPlatform(PayPlatformType.MICRO);
+                break;
         }
-        MatrixPayOrderCloseResult result = new MatrixPayOrderCloseResult();
-        MatrixBeanUtils.copyWxProperties(wxPayOrderCloseResult, result);
         return result;
     }
 
@@ -154,20 +160,44 @@ public class WxPayServiceImpl implements MatrixPayService {
         return result;
     }
 
-    @Override
-    public MatrixPayUnifiedOrderResult unifiedOrder(MatrixPayUnifiedOrderRequest request) throws MatrixPayException {
-        WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest = new WxPayUnifiedOrderRequest();
-        MatrixBeanUtils.copyWxProperties(request, wxPayUnifiedOrderRequest);
-        WxPayUnifiedOrderResult wxPayUnifiedOrderResult = null;
-        try {
-            wxPayUnifiedOrderResult = wxPayService.unifiedOrder(wxPayUnifiedOrderRequest);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-        MatrixPayUnifiedOrderResult result = new MatrixPayUnifiedOrderResult();
-        MatrixBeanUtils.copyWxProperties(wxPayUnifiedOrderResult, result);
-        return result;
-    }
+//    @Override
+//    public MatrixPayUnifiedOrderResult unifiedOrder(MatrixPayUnifiedOrderRequest request) throws MatrixPayException {
+//        WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest = new WxPayUnifiedOrderRequest();
+//        MatrixBeanUtils.copyWxProperties(request, wxPayUnifiedOrderRequest);
+//        // JSAPI--公众号支付、NATIVE--原生扫码支付、APP--app支付，统一下单接口trade_type的传参可参考这里
+//        switch (request.getPayPlatform()) {
+//            case WEB:
+//                wxPayUnifiedOrderRequest.setTradeType("NATIVE");
+//                break;
+//            case MP:
+//                wxPayUnifiedOrderRequest.setTradeType("JSAPI");
+//                break;
+//            case APP:
+//                wxPayUnifiedOrderRequest.setTradeType("APP");
+//                break;
+//        }
+//        List<MatrixPayUnifiedOrderRequestGoodsDetail> detail = request.getDetail();
+//        List<MatrixPayUnifiedOrderRequestGoodsDetail> goodsDetails = detail.stream().map(item -> {
+//            Map<String, Object> map = new HashMap<>();
+//            map.put("goods_id", item.getGoodsId());
+//            map.put("wxpay_goods_id", item.getPayGoodsId());
+//            map.put("goods_num", item.getGoodsNum());
+//            map.put("price", item.getPrice());
+//            map.put("goods_category", item.getGoodsCategory());
+//            map.put("body", item.getBody());
+//            return item;
+//        }).collect(Collectors.toList());
+//        wxPayUnifiedOrderRequest.setDetail(new Gson().toJson(goodsDetails));
+//        WxPayUnifiedOrderResult wxPayUnifiedOrderResult = null;
+//        try {
+//            wxPayUnifiedOrderResult = wxPayService.unifiedOrder(wxPayUnifiedOrderRequest);
+//        } catch (WxPayException e) {
+//            throw new MatrixPayException(e);
+//        }
+//        MatrixPayUnifiedOrderResult result = new MatrixPayUnifiedOrderResult();
+//        MatrixBeanUtils.copyWxProperties(wxPayUnifiedOrderResult, result);
+//        return result;
+//    }
 
     @Override
     public MatrixPayRefundResult refund(MatrixPayRefundRequest entity) throws MatrixPayException {

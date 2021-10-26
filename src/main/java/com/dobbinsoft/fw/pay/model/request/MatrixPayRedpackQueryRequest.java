@@ -23,11 +23,6 @@ import lombok.*;
 @AllArgsConstructor
 public class MatrixPayRedpackQueryRequest extends MatrixBasePayRequest {
 
-    @Override
-    protected String[] getIgnoredParamsForSign() {
-        return new String[]{"sub_appid", "sub_mch_id"};
-    }
-
     /**
      * 商户订单号
      * mch_billno
@@ -48,8 +43,4 @@ public class MatrixPayRedpackQueryRequest extends MatrixBasePayRequest {
      */
     private String billType;
 
-    @Override
-    protected void checkConstraints() {
-
-    }
 }

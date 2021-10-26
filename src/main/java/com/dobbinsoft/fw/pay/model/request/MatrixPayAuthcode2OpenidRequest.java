@@ -28,8 +28,4 @@ public class MatrixPayAuthcode2OpenidRequest extends MatrixBasePayRequest {
      */
     private String authCode;
 
-    @Override
-    protected void checkConstraints() {
-        // nothing to do
-    }
 }

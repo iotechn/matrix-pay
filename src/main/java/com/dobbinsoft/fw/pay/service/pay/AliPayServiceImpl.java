@@ -1,17 +1,17 @@
 package com.dobbinsoft.fw.pay.service.pay;
 
-import com.alipay.easysdk.factory.Factory;
+import com.alipay.easysdk.kernel.Client;
 import com.alipay.easysdk.kernel.Config;
 import com.alipay.easysdk.payment.app.models.AlipayTradeAppPayResponse;
 import com.alipay.easysdk.payment.common.models.*;
 import com.alipay.easysdk.payment.facetoface.models.AlipayTradePayResponse;
-import com.alipay.easysdk.payment.facetoface.models.AlipayTradePrecreateResponse;
 import com.alipay.easysdk.payment.page.models.AlipayTradePagePayResponse;
 import com.dobbinsoft.fw.pay.client.AliClient;
 import com.dobbinsoft.fw.pay.config.PayProperties;
+import com.dobbinsoft.fw.pay.enums.PayChannelType;
 import com.dobbinsoft.fw.pay.enums.PayPlatformType;
 import com.dobbinsoft.fw.pay.exception.MatrixPayException;
-import com.dobbinsoft.fw.pay.exception.PayServiceException;
+import com.dobbinsoft.fw.pay.exception.MatrixPayException;
 import com.dobbinsoft.fw.pay.model.coupon.*;
 import com.dobbinsoft.fw.pay.model.notify.MatrixPayOrderNotifyResult;
 import com.dobbinsoft.fw.pay.model.notify.MatrixPayRefundNotifyResult;
@@ -19,13 +19,19 @@ import com.dobbinsoft.fw.pay.model.notify.MatrixScanPayNotifyResult;
 import com.dobbinsoft.fw.pay.model.request.*;
 import com.dobbinsoft.fw.pay.model.result.*;
 import com.github.binarywang.wxpay.bean.WxPayApiData;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * ClassName: AliPayServiceImpl
@@ -38,7 +44,7 @@ public class AliPayServiceImpl implements MatrixPayService {
 
     private static final Logger logger = LoggerFactory.getLogger(AliPayServiceImpl.class);
 
-    private Map<String, AliClient> configMap = new HashMap<>();
+    private Map<String, AliClient> configMap = new ConcurrentHashMap<>();
 
     private PayProperties payProperties;
 
@@ -46,66 +52,90 @@ public class AliPayServiceImpl implements MatrixPayService {
         this.payProperties = payProperties;
     }
 
-    /**
-     * 由配置到IoC中时，由ioc框架调用
-     */
-    public void init() {
-        if (configMap.get(payProperties.getAliMiniAppId()) == null && StringUtils.isNotBlank(payProperties.getAliMiniAppId())) {
-            Config configMini = new Config();
-            configMini.protocol = "https";
-            configMini.appId = payProperties.getAliMiniAppId();
-            configMini.gatewayHost = payProperties.getAliGateway();
-            configMini.signType = "RSA2";
-            configMini.merchantPrivateKey = payProperties.getAliMchMiniPrivateKey();
-            configMini.alipayPublicKey = payProperties.getAliAliMiniPublicKey();
-            configMini.notifyUrl = payProperties.getAliMiniNotifyUrl();
-            this.configMap.put(payProperties.getAliMiniAppId(), new AliClient(configMini));
-        }
-        if (configMap.get(payProperties.getAliAppAppId()) == null && StringUtils.isNotBlank(payProperties.getAliAppAppId())) {
-            Config configApp = new Config();
-            configApp.protocol = "https";
-            configApp.appId = payProperties.getAliAppAppId();
-            configApp.gatewayHost = payProperties.getAliGateway();
-            configApp.signType = "RSA2";
-            configApp.merchantPrivateKey = payProperties.getAliMchAppPrivateKey();
-            configApp.alipayPublicKey = payProperties.getAliAliAppPublicKey();
-            configApp.notifyUrl = payProperties.getAliAppNotifyUrl();
-            this.configMap.put(payProperties.getAliAppAppId(), new AliClient(configApp));
-        }
-        if (configMap.get(payProperties.getAliWebAppId()) == null && StringUtils.isNotBlank(payProperties.getAliWebAppId())) {
-            Config configWeb = new Config();
-            configWeb.protocol = "https";
-            configWeb.appId = payProperties.getAliWebAppId();
-            configWeb.gatewayHost = payProperties.getAliGateway();
-            configWeb.signType = "RSA2";
-            configWeb.merchantPrivateKey = payProperties.getAliMchWebPrivateKey();
-            configWeb.alipayPublicKey = payProperties.getAliAliWebPublicKey();
-            configWeb.notifyUrl = payProperties.getAliWebNotifyUrl();
-            this.configMap.put(payProperties.getAliWebAppId(), new AliClient(configWeb));
-        }
-    }
-
     @Override
-    public Object createOrder(MatrixPayUnifiedOrderRequest entity) throws PayServiceException {
-        AliClient aliClient = configMap.get(entity.getAppid());
+    public Object createOrder(MatrixPayUnifiedOrderRequest entity) throws MatrixPayException {
+        AliClient aliClient = getClient(entity.getAppid());
         try {
+            List<Map<String, Object>> detailMaps = null;
+            if (!CollectionUtils.isEmpty(entity.getDetail())) {
+                List<MatrixPayUnifiedOrderRequestGoodsDetail> detail = entity.getDetail();
+                detailMaps = detail.stream().map(item -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("goods_id", item.getGoodsId());
+                    map.put("goods_name", item.getGoodsName());
+                    map.put("quantity", item.getGoodsNum());
+                    map.put("price", fenToYuan(item.getPrice()));
+                    map.put("goods_category", item.getGoodsCategory());
+                    return map;
+                }).collect(Collectors.toList());
+
+            }
             if (entity.getPayPlatform() == PayPlatformType.APP) {
                 AlipayTradeAppPayResponse appPayResponse = aliClient.payment.App()
+                        .optional("body", entity.getAttach())
+                        .optional("time_expire", transToAliTime(entity.getTimeExpire()))
+                        .optional("goods_detail", detailMaps)
+                        .optional("terminal_id", entity.getDeviceInfo())
                         .pay(entity.getBody(), entity.getOutTradeNo(), this.fenToYuan(entity.getTotalFee()));
                 return appPayResponse.body;
             } else if (entity.getPayPlatform() == PayPlatformType.WEB) {
                 AlipayTradePagePayResponse pagePayResponse = aliClient.payment.Page()
+                        .optional("body", entity.getAttach())
+                        .optional("time_expire", transToAliTime(entity.getTimeExpire()))
+                        .optional("goods_detail", detailMaps)
+                        .optional("terminal_id", entity.getDeviceInfo())
                         .pay(entity.getBody(), entity.getOutTradeNo(), this.fenToYuan(entity.getTotalFee()), entity.getReturnUrl());
                 return pagePayResponse.body;
             } else {
-                AlipayTradeCreateResponse alipayTradeCreateResponse = aliClient.payment.Common().create(entity.getBody(),
-                        entity.getOutTradeNo(),
-                        this.fenToYuan(entity.getTotalFee()), entity.getOpenid());
+                AlipayTradeCreateResponse alipayTradeCreateResponse = aliClient.payment.Common()
+                        .optional("body", entity.getAttach())
+                        .optional("time_expire", transToAliTime(entity.getTimeExpire()))
+                        .optional("goods_detail", detailMaps)
+                        .optional("terminal_id", entity.getDeviceInfo())
+                        .create(entity.getBody(), entity.getOutTradeNo(), this.fenToYuan(entity.getTotalFee()), entity.getOpenid());
                 return alipayTradeCreateResponse;
             }
         } catch (Exception e) {
             logger.info("[支付宝] 创建统一支付订单 异常 outTradeNo=" + entity.getOutTradeNo(), e);
-            throw new PayServiceException(e.getMessage());
+            throw new MatrixPayException(e.getMessage());
+        }
+    }
+
+    /**
+     * 将微信的时间，转化为ali的时间
+     *
+     * @param time
+     * @return
+     */
+    private String transToAliTime(String time) throws ParseException {
+        if (time == null) {
+            return null;
+        }
+        SimpleDateFormat wxSdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date parse = wxSdf.parse(time);
+        SimpleDateFormat aliSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return aliSdf.format(parse);
+    }
+
+    private String transToWxTime(String time) throws ParseException {
+        if (time == null) {
+            return null;
+        }
+        SimpleDateFormat aliSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date parse = aliSdf.parse(time);
+        SimpleDateFormat wxSdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        return wxSdf.format(parse);
+    }
+
+    @Override
+    public void configWarmUp(List<PayProperties> list) {
+        if (!CollectionUtils.isEmpty(list)) {
+            for (PayProperties properties : list) {
+                if (StringUtils.isNotBlank(properties.getAliAppId())) {
+                    AliClient aliClient = new AliClient(this.buildNewConfig(properties));
+                    this.configMap.put(payProperties.getAliAppId(), aliClient);
+                }
+            }
         }
     }
 
@@ -120,75 +150,59 @@ public class AliPayServiceImpl implements MatrixPayService {
     }
 
     @Override
-    public MatrixPayOrderQueryResult queryOrder(String transactionId, String outTradeNo) throws MatrixPayException {
-        if (outTradeNo == null || "".equals(outTradeNo)) {
+    public MatrixPayOrderQueryResult queryOrder(MatrixPayOrderQueryRequest request) throws MatrixPayException {
+        if (StringUtils.isBlank(request.getOutTradeNo()) && StringUtils.isBlank(request.getTransactionId())) {
             throw new MatrixPayException("支付宝仅支持outTradeNo查询");
         }
-        Set<String> keys = this.configMap.keySet();
+        AliClient aliClient = this.getClient(request.getAppid());
         try {
-            for (String appId : keys) {
-                AliClient aliClient = configMap.get(appId);
-                AlipayTradeQueryResponse query = aliClient.payment.Common().query(outTradeNo);
-                if (query != null) {
-                    MatrixPayOrderQueryResult matrixPayOrderQueryResult = new MatrixPayOrderQueryResult();
-                    matrixPayOrderQueryResult.setAppid(appId);
-                    matrixPayOrderQueryResult.setOutTradeNo(query.getOutTradeNo());
-                    matrixPayOrderQueryResult.setTransactionId(query.getTradeNo());
-                    matrixPayOrderQueryResult.setOpenid(query.getBuyerUserId());
-                    matrixPayOrderQueryResult.setMchId(appId);
-                    matrixPayOrderQueryResult.setCashFee(yuanToFen(query.getTotalAmount()));
-                    matrixPayOrderQueryResult.setCashFeeType(query.getTransCurrency());
-                    String tradeStatus = query.getTradeStatus();
-                    matrixPayOrderQueryResult.setTradeState(toMatrixStatus(tradeStatus));
-                    return matrixPayOrderQueryResult;
-                }
+            AlipayTradeQueryResponse response = aliClient.payment.Common()
+                    .optional("trade_no", request.getTransactionId())
+                    .query(StringUtils.isBlank(request.getOutTradeNo()) ? "" : request.getOutTradeNo());
+            if (response != null) {
+                // TODO payPlatform 如何确定
+                MatrixPayOrderQueryResult matrixPayOrderQueryResult = new MatrixPayOrderQueryResult();
+                matrixPayOrderQueryResult.setPayChannel(PayChannelType.ALI);
+                matrixPayOrderQueryResult.setAppid(request.getAppid());
+                matrixPayOrderQueryResult.setOutTradeNo(response.getOutTradeNo());
+                matrixPayOrderQueryResult.setTransactionId(response.getTradeNo());
+                matrixPayOrderQueryResult.setOpenid(response.getBuyerUserId());
+                matrixPayOrderQueryResult.setTotalFee(yuanToFen(response.getTotalAmount()));
+                matrixPayOrderQueryResult.setFeeType(response.getTransCurrency());
+                String tradeStatus = response.getTradeStatus();
+                matrixPayOrderQueryResult.setTradeState(toMatrixStatus(tradeStatus));
+                matrixPayOrderQueryResult.setAttach(response.getBody());
+                matrixPayOrderQueryResult.setDeviceInfo(response.getTerminalId());
+                matrixPayOrderQueryResult.setTimeEnd(transToWxTime(response.getSendPayDate()));
+                return matrixPayOrderQueryResult;
             }
         } catch (Exception e) {
-            logger.info("[支付宝] 支付订单查询 异常 outTradeNo=" + outTradeNo, e);
-            throw new PayServiceException(e.getMessage());
-        }
-        return null;
-    }
-
-    @Override
-    public MatrixPayOrderQueryResult queryOrder(MatrixPayOrderQueryRequest request) throws MatrixPayException {
-        return this.queryOrder(request.getTransactionId(), request.getOutTradeNo());
-    }
-
-    @Override
-    public MatrixPayOrderCloseResult closeOrder(String outTradeNo) throws MatrixPayException {
-        Set<String> keys = this.configMap.keySet();
-        try {
-            for (String appId : keys) {
-                AliClient aliClient = configMap.get(appId);
-                AlipayTradeCloseResponse response = aliClient.payment.Common().close(outTradeNo);
-                if (response != null) {
-                    MatrixPayOrderCloseResult matrixPayOrderCloseResult = new MatrixPayOrderCloseResult();
-                    matrixPayOrderCloseResult.setAppid(appId);
-                    matrixPayOrderCloseResult.setMchId(appId);
-                    return matrixPayOrderCloseResult;
-                }
-            }
-        } catch (Exception e) {
-            logger.info("[支付宝] 关闭订单 异常 outTradeNo=" + outTradeNo, e);
-            throw new PayServiceException(e.getMessage());
+            logger.error("[支付宝] 支付订单查询 异常 outTradeNo=" + request.getOutTradeNo() + " ;transactionId=" + request.getTransactionId(), e);
+            throw new MatrixPayException(e.getMessage());
         }
         return null;
     }
 
     @Override
     public MatrixPayOrderCloseResult closeOrder(MatrixPayOrderCloseRequest request) throws MatrixPayException {
-        return this.closeOrder(request.getOutTradeNo());
-    }
-
-    @Override
-    public MatrixPayUnifiedOrderResult unifiedOrder(MatrixPayUnifiedOrderRequest entity) throws MatrixPayException {
-        throw new MatrixPayException("支付宝暂不支持统一下单");
+        try {
+            AliClient aliClient = getClient(request.getAppid());
+            AlipayTradeCloseResponse response = aliClient.payment.Common().close(request.getOutTradeNo());
+            if (response != null) {
+                MatrixPayOrderCloseResult matrixPayOrderCloseResult = new MatrixPayOrderCloseResult();
+                matrixPayOrderCloseResult.setAppid(request.getAppid());
+                return matrixPayOrderCloseResult;
+            }
+        } catch (Exception e) {
+            logger.info("[支付宝] 关闭订单 异常 outTradeNo=" + request.getOutTradeNo(), e);
+            throw new MatrixPayException(e.getMessage());
+        }
+        return null;
     }
 
     @Override
     public MatrixPayRefundResult refund(MatrixPayRefundRequest entity) throws MatrixPayException {
-        AliClient aliClient = configMap.get(entity.getAppid());
+        AliClient aliClient = getClient(entity.getAppid());
         try {
             AlipayTradeRefundResponse response =
                     aliClient.payment.Common().refund(entity.getOutTradeNo(), fenToYuan(entity.getRefundFee()));
@@ -214,7 +228,7 @@ public class AliPayServiceImpl implements MatrixPayService {
         Set<String> strings = configMap.keySet();
         try {
             for (String appId : strings) {
-                AliClient aliClient = configMap.get(appId);
+                AliClient aliClient = getClient(appId);
                 AlipayTradeFastpayRefundQueryResponse response = aliClient.payment.Common().queryRefund(outTradeNo, outRefundNo);
                 if (response != null) {
                     MatrixPayRefundQueryResult result = new MatrixPayRefundQueryResult();
@@ -320,7 +334,7 @@ public class AliPayServiceImpl implements MatrixPayService {
 
     @Override
     public MatrixPayMicropayResult micropay(MatrixPayMicropayRequest request) throws MatrixPayException {
-        AliClient aliClient = configMap.get(request.getAppid());
+        AliClient aliClient = getClient(request.getAppid());
         try {
             AlipayTradePayResponse response = aliClient.payment.FaceToFace().pay(request.getBody(), request.getOutTradeNo(), fenToYuan(request.getTotalFee()), request.getAuthCode());
             MatrixPayMicropayResult result = new MatrixPayMicropayResult();
@@ -335,7 +349,7 @@ public class AliPayServiceImpl implements MatrixPayService {
 //        result.setFeeType(response.getCur);
         } catch (Exception e) {
             logger.error("[支付宝] 提交当面支付 异常 outTradeNo=" + request.getOutTradeNo(), e);
-            throw new PayServiceException(e.getMessage());
+            throw new MatrixPayException(e.getMessage());
         }
     }
 
@@ -404,7 +418,7 @@ public class AliPayServiceImpl implements MatrixPayService {
     public MatrixPayOrderNotifyResult checkSign(Object request) throws MatrixPayException {
         try {
             Map<String, String> map = (Map<String, String>) request;
-            AliClient aliClient = configMap.get(map.get("app_id"));
+            AliClient aliClient = getClient(map.get("app_id"));
             aliClient.payment.Common().verifyNotify(map);
             MatrixPayOrderNotifyResult result = new MatrixPayOrderNotifyResult();
             result.setOpenid(map.get("buyer_id"));
@@ -437,5 +451,43 @@ public class AliPayServiceImpl implements MatrixPayService {
 
     public static Integer yuanToFen(String yuan) {
         return (new BigDecimal(yuan)).setScale(2, 4).multiply(new BigDecimal(100)).intValue();
+    }
+
+    private AliClient getClient(String appId) {
+        AliClient aliClient = this.configMap.get(appId);
+        if (aliClient == null) {
+            String aliAppId = this.payProperties.getAliAppId();
+            if (StringUtils.equals(appId, aliAppId)) {
+                aliClient = new AliClient(this.buildNewConfig(this.payProperties));
+                this.configMap.put(payProperties.getAliAppId(), aliClient);
+            } else {
+                throw new MatrixPayException("加载APPID失败，请再PayProperties接口中返回对应的APPID");
+            }
+        } else {
+            // 动态判断APPID是否被更新
+            Config config = aliClient.getConfig();
+            if (config.appId.hashCode() != payProperties.getAliAppId().hashCode()
+                    || config.gatewayHost.hashCode() != payProperties.getAliGateway().hashCode()
+                    || config.merchantPrivateKey.hashCode() != payProperties.getAliMchPrivateKey().hashCode()
+                    || config.alipayPublicKey.hashCode() != payProperties.getAliAliPublicKey().hashCode()
+                    || config.notifyUrl.hashCode() != payProperties.getAliNotifyUrl().hashCode()
+                    || config.alipayPublicKey.hashCode() != payProperties.getAliAliPublicKey().hashCode()) {
+                aliClient = new AliClient(this.buildNewConfig(this.payProperties));
+                this.configMap.put(payProperties.getAliAppId(), aliClient);
+            }
+        }
+        return aliClient;
+    }
+
+    private Config buildNewConfig(PayProperties properties) {
+        Config config = new Config();
+        config.protocol = "https";
+        config.appId = properties.getAliAppId();
+        config.gatewayHost = properties.getAliGateway();
+        config.signType = "RSA2";
+        config.merchantPrivateKey = properties.getAliMchPrivateKey();
+        config.alipayPublicKey = properties.getAliAliPublicKey();
+        config.notifyUrl = properties.getAliNotifyUrl();
+        return config;
     }
 }

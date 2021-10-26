@@ -9,13 +9,4 @@ package com.dobbinsoft.fw.pay.model.request;
  * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 public class MatrixPayDefaultRequest extends MatrixBasePayRequest {
-    @Override
-    protected void checkConstraints() {
-        //do nothing
-    }
-
-    @Override
-    protected boolean ignoreAppid() {
-        return true;
-    }
 }

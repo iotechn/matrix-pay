@@ -1,5 +1,7 @@
 package com.dobbinsoft.fw.pay.util;
 
+import com.dobbinsoft.fw.pay.anntation.MatrixIgnoreCopy;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -63,6 +65,9 @@ public class MatrixBeanUtils {
         }
         Map<String, Field> targetMap = targetFields.stream().collect(Collectors.toMap(Field::getName, v -> v));
         for (Field sourceField : sourceFields) {
+            if (sourceField.getAnnotation(MatrixIgnoreCopy.class) != null) {
+                continue;
+            }
             String name = sourceField.getName();
             Field targetField = targetMap.get(name);
             if (targetField != null) {

@@ -16,11 +16,6 @@ import lombok.*;
 public class MatrixPaySendRedpackRequest extends MatrixBasePayRequest {
     private static final long serialVersionUID = -2035425086824987567L;
 
-    @Override
-    protected String[] getIgnoredParamsForSign() {
-        return new String[]{"sign_type", "sub_appid"};
-    }
-
     /**
      * mch_billno.
      * 商户订单号（每个订单号必须唯一）
@@ -150,10 +145,6 @@ public class MatrixPaySendRedpackRequest extends MatrixBasePayRequest {
      */
     private String consumeMchId;
 
-    @Override
-    protected void checkConstraints() {
-
-    }
 
     @Override
     public String getAppid() {

@@ -1,5 +1,6 @@
 package com.dobbinsoft.fw.pay.model.entpay;
 
+import com.dobbinsoft.fw.pay.model.request.MatrixBasePayRequest;
 import com.github.binarywang.wxpay.bean.request.BaseWxPayRequest;
 import lombok.*;
 import me.chanjar.weixin.common.annotation.Required;
@@ -18,7 +19,7 @@ import me.chanjar.weixin.common.util.json.WxGsonBuilder;
 @Builder(builderMethodName = "newBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
-public class MatrixEntPayQueryRequest extends BaseWxPayRequest {
+public class MatrixEntPayQueryRequest extends MatrixBasePayRequest {
   private static final long serialVersionUID = 1972288742207813985L;
 
   /**
@@ -34,18 +35,4 @@ public class MatrixEntPayQueryRequest extends BaseWxPayRequest {
   @Required
   private String partnerTradeNo;
 
-  @Override
-  protected void checkConstraints() {
-    //do nothing
-  }
-
-  @Override
-  public String toString() {
-    return WxGsonBuilder.create().toJson(this);
-  }
-
-  @Override
-  protected String[] getIgnoredParamsForSign() {
-    return new String[]{"sign_type"};
-  }
 }

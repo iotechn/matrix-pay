@@ -1,7 +1,6 @@
 package com.dobbinsoft.fw.pay.model.entpay;
 
-import com.github.binarywang.wxpay.bean.request.BaseWxPayRequest;
-import com.github.binarywang.wxpay.exception.WxPayException;
+import com.dobbinsoft.fw.pay.model.request.MatrixBasePayRequest;
 import lombok.*;
 
 /**
@@ -17,7 +16,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MatrixEntPayBankRequest extends BaseWxPayRequest {
+public class MatrixEntPayBankRequest extends MatrixBasePayRequest {
 
   /**
    * <pre>
@@ -93,17 +92,4 @@ public class MatrixEntPayBankRequest extends BaseWxPayRequest {
    */
   private String description;
 
-  @Override
-  protected void checkConstraints() throws WxPayException {
-  }
-
-  @Override
-  protected String[] getIgnoredParamsForSign() {
-    return new String[]{"sign_type"};
-  }
-
-  @Override
-  protected boolean ignoreAppid() {
-    return true;
-  }
 }

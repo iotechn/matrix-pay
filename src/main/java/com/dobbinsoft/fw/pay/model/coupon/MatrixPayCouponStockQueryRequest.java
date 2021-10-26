@@ -1,6 +1,6 @@
 package com.dobbinsoft.fw.pay.model.coupon;
 
-import com.github.binarywang.wxpay.bean.request.BaseWxPayRequest;
+import com.dobbinsoft.fw.pay.model.request.MatrixBasePayRequest;
 import lombok.*;
 
 /**
@@ -16,7 +16,7 @@ import lombok.*;
 @Builder(builderMethodName = "newBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
-public class MatrixPayCouponStockQueryRequest extends BaseWxPayRequest {
+public class MatrixPayCouponStockQueryRequest extends MatrixBasePayRequest {
     /**
      * <pre>
      * 字段名：代金券批次id
@@ -76,10 +76,5 @@ public class MatrixPayCouponStockQueryRequest extends BaseWxPayRequest {
      * </pre>
      */
     private String type;
-
-    @Override
-    protected void checkConstraints() {
-        //do nothing
-    }
 
 }

@@ -42,11 +42,4 @@ public class MatrixPayOrderReverseRequest extends MatrixBasePayRequest {
      */
     private String outTradeNo;
 
-    @Override
-    protected void checkConstraints() throws WxPayException {
-        if (StringUtils.isBlank(transactionId) && StringUtils.isBlank(outTradeNo)) {
-            throw new WxPayException("transaction_id 和 out_trade_no不能同时为空！");
-        }
-    }
-
 }

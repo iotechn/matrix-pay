@@ -1,5 +1,6 @@
 package com.dobbinsoft.fw.pay.service.pay;
 
+import com.dobbinsoft.fw.pay.config.PayProperties;
 import com.dobbinsoft.fw.pay.exception.MatrixPayException;
 import com.dobbinsoft.fw.pay.exception.PayServiceException;
 import com.dobbinsoft.fw.pay.model.coupon.*;
@@ -12,6 +13,7 @@ import com.github.binarywang.wxpay.bean.WxPayApiData;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <pre>
@@ -22,6 +24,14 @@ import java.util.Date;
  * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 public interface MatrixPayService {
+
+    /**
+     * 配置预热，将一些需要被管理的APPID置入其中。后面便无需通过 PayProperties动态传入了
+     * 一般在系统初始化IoC加载时预热
+     *
+     * @param list 配置列表
+     */
+    public void configWarmUp(List<PayProperties> list);
 
     /**
      * 获取企业付款服务类.
@@ -39,60 +49,23 @@ public interface MatrixPayService {
 
     /**
      * <pre>
-     * 查询订单.
-     * 详见https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_2
-     * 该接口提供所有微信支付订单的查询，商户可以通过查询订单接口主动查询订单状态，完成下一步的业务逻辑。
-     * 需要调用查询接口的情况：
-     * ◆ 当商户后台、网络、服务器等出现异常，商户系统最终未接收到支付通知；
-     * ◆ 调用支付接口后，返回系统错误或未知交易状态情况；
-     * ◆ 调用被扫支付API，返回USERPAYING的状态；
-     * ◆ 调用关单或撤销接口API之前，需确认支付状态；
-     * 接口地址：https://api.mch.weixin.qq.com/pay/orderquery
-     * </pre>
-     *
-     * @param transactionId 微信订单号
-     * @param outTradeNo    商户系统内部的订单号，当没提供transactionId时需要传这个。
-     * @return the wx pay order query result
-     * @throws MatrixPayException the wx pay exception
-     */
-    MatrixPayOrderQueryResult queryOrder(String transactionId, String outTradeNo) throws MatrixPayException;
-
-    /**
-     * <pre>
      * 查询订单（适合于需要自定义子商户号和子商户appid的情形）.
-     * 详见https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_2
-     * 该接口提供所有微信支付订单的查询，商户可以通过查询订单接口主动查询订单状态，完成下一步的业务逻辑。
+     * 微信详见：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_2
+     * 支付宝详见：
+     * 云闪付详见：
+     * 该接口提供所有支付订单的查询，商户可以通过查询订单接口主动查询订单状态，完成下一步的业务逻辑。
      * 需要调用查询接口的情况：
      * ◆ 当商户后台、网络、服务器等出现异常，商户系统最终未接收到支付通知；
      * ◆ 调用支付接口后，返回系统错误或未知交易状态情况；
      * ◆ 调用被扫支付API，返回USERPAYING的状态；
      * ◆ 调用关单或撤销接口API之前，需确认支付状态；
-     * 接口地址：https://api.mch.weixin.qq.com/pay/orderquery
      * </pre>
      *
      * @param request 查询订单请求对象
-     * @return the wx pay order query result
-     * @throws MatrixPayException the wx pay exception
+     * @return the pay order query result
+     * @throws MatrixPayException the pay exception
      */
     MatrixPayOrderQueryResult queryOrder(MatrixPayOrderQueryRequest request) throws MatrixPayException;
-
-    /**
-     * <pre>
-     * 关闭订单.
-     * 应用场景
-     * 以下情况需要调用关单接口：
-     * 1. 商户订单支付失败需要生成新单号重新发起支付，要对原订单号调用关单，避免重复支付；
-     * 2. 系统下单后，用户支付超时，系统退出不再受理，避免用户继续，请调用关单接口。
-     * 注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。
-     * 接口地址：https://api.mch.weixin.qq.com/pay/closeorder
-     * 是否需要证书：   不需要。
-     * </pre>
-     *
-     * @param outTradeNo 商户系统内部的订单号
-     * @return the wx pay order close result
-     * @throws MatrixPayException the wx pay exception
-     */
-    MatrixPayOrderCloseResult closeOrder(String outTradeNo) throws MatrixPayException;
 
     /**
      * <pre>
@@ -102,42 +75,31 @@ public interface MatrixPayService {
      * 1. 商户订单支付失败需要生成新单号重新发起支付，要对原订单号调用关单，避免重复支付；
      * 2. 系统下单后，用户支付超时，系统退出不再受理，避免用户继续，请调用关单接口。
      * 注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。
-     * 接口地址：https://api.mch.weixin.qq.com/pay/closeorder
      * 是否需要证书：   不需要。
      * </pre>
      *
      * @param request 关闭订单请求对象
-     * @return the wx pay order close result
-     * @throws MatrixPayException the wx pay exception
+     * @return the pay order close result
+     * @throws MatrixPayException the pay exception
      */
     MatrixPayOrderCloseResult closeOrder(MatrixPayOrderCloseRequest request) throws MatrixPayException;
 
     /**
      * 调用统一下单接口，并组装生成支付所需参数对象.
      *
-     * @param <T>     请使用{@link com.github.binarywang.wxpay.bean.order}包下的类
      * @param request 统一下单请求参数
-     * @return 返回 {@link com.github.binarywang.wxpay.bean.order}包下的类对象
+     * @return 返回 前端支付请求所需对象
      * @throws MatrixPayException the wx pay exception
      */
     <T> T createOrder(MatrixPayUnifiedOrderRequest request) throws MatrixPayException;
 
-    /**
-     * 统一下单(详见https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1)
-     * 在发起微信支付前，需要调用统一下单接口，获取"预支付交易会话标识"
-     * 接口地址：https://api.mch.weixin.qq.com/pay/unifiedorder
-     *
-     * @param request 请求对象，注意一些参数如appid、mchid等不用设置，方法内会自动从配置对象中获取到（前提是对应配置中已经设置）
-     * @return the wx pay unified order result
-     * @throws MatrixPayException the wx pay exception
-     */
-    MatrixPayUnifiedOrderResult unifiedOrder(MatrixPayUnifiedOrderRequest request) throws MatrixPayException;
 
     /**
      * <pre>
-     * 微信支付-申请退款.
-     * 详见 https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_4
-     * 接口链接：https://api.mch.weixin.qq.com/secapi/pay/refund
+     * 支付-申请退款.
+     * 微信详见 https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_4
+     * 支付宝详见
+     * 云闪付详见
      * </pre>
      *
      * @param request 请求对象

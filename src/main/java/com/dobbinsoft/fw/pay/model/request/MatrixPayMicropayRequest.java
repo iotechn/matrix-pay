@@ -189,9 +189,4 @@ public class MatrixPayMicropayRequest extends MatrixBasePayRequest {
      */
     private String sceneInfo;
 
-    @Override
-    protected void checkConstraints() {
-        //do nothing
-    }
-
 }

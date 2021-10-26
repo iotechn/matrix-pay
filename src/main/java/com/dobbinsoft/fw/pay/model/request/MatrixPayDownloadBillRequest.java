@@ -75,15 +75,4 @@ public class MatrixPayDownloadBillRequest extends MatrixBasePayRequest {
      */
     private String tarType;
 
-    @Override
-    protected void checkConstraints() throws WxPayException {
-        if (StringUtils.isNotBlank(this.getTarType()) && !TAR_TYPE_GZIP.equals(this.getTarType())) {
-            throw new WxPayException("tar_type值如果存在，只能为GZIP");
-        }
-
-        if (!ArrayUtils.contains(BILL_TYPES, this.getBillType())) {
-            throw new WxPayException(String.format("bill_type目前必须为%s其中之一,实际值：%s",
-                    Arrays.toString(BILL_TYPES), this.getBillType()));
-        }
-    }
 }

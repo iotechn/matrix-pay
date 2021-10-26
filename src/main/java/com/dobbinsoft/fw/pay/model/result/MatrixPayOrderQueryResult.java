@@ -1,6 +1,5 @@
 package com.dobbinsoft.fw.pay.model.result;
 
-import com.google.common.collect.Lists;
 import lombok.*;
 
 import java.io.Serializable;
@@ -77,18 +76,6 @@ public class MatrixPayOrderQueryResult extends MatrixBasePayResult {
 
     /**
      * <pre>
-     * 交易类型.
-     * trade_type
-     * 是
-     * String(16)
-     * JSAPI
-     * 调用接口提交的交易类型，取值如下：JSAPI，NATIVE，APP，MICROPAY，详细说明见参数规定
-     * </pre>
-     */
-    private String tradeType;
-
-    /**
-     * <pre>
      * 交易状态.
      * trade_state
      * 是
@@ -146,30 +133,6 @@ public class MatrixPayOrderQueryResult extends MatrixBasePayResult {
      * </pre>
      */
     private String feeType;
-
-    /**
-     * <pre>
-     * 现金支付金额.
-     * cash_fee
-     * 是
-     * Int
-     * 100
-     * 现金支付金额订单现金支付金额，详见支付金额
-     * </pre>
-     */
-    private Integer cashFee;
-
-    /**
-     * <pre>
-     * 现金支付货币类型.
-     * cash_fee_type
-     * 否
-     * String(16)
-     * CNY
-     * 货币类型，符合ISO 4217标准的三位字母代码，默认人民币：CNY，其他值列表详见货币类型
-     * </pre>
-     */
-    private String cashFeeType;
 
     /**
      * <pre>
@@ -250,20 +213,6 @@ public class MatrixPayOrderQueryResult extends MatrixBasePayResult {
      * </pre>
      */
     private String tradeStateDesc;
-
-    /**
-     * 通过xml组装coupons属性内容.
-     */
-    public void composeCoupons() {
-        if (this.couponCount != null && this.couponCount > 0) {
-            this.coupons = Lists.newArrayList();
-            for (int i = 0; i < this.couponCount; i++) {
-                this.coupons.add(new Coupon(this.getXmlValue("xml/coupon_type_" + i),
-                        this.getXmlValue("xml/coupon_id_" + i),
-                        this.getXmlValueAsInt("xml/coupon_fee_" + i)));
-            }
-        }
-    }
 
     /**
      * The type Coupon.

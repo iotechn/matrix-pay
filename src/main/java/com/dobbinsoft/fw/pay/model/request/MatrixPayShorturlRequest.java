@@ -29,8 +29,4 @@ public class MatrixPayShorturlRequest extends MatrixBasePayRequest {
      */
     private String longUrl;
 
-    @Override
-    protected void checkConstraints() {
-        //do nothing
-    }
 }

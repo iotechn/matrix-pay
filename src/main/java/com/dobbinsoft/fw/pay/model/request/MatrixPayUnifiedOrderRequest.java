@@ -1,10 +1,15 @@
 package com.dobbinsoft.fw.pay.model.request;
 
+import com.dobbinsoft.fw.pay.anntation.MatrixIgnoreCopy;
+import com.dobbinsoft.fw.pay.enums.PayPlatformType;
+import com.dobbinsoft.fw.pay.exception.MatrixPayException;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.constant.WxPayConstants.TradeType;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /**
  * <pre>
@@ -22,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 @AllArgsConstructor
 public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
     private static final long serialVersionUID = 4611350167813931828L;
-
 
 
     /**
@@ -69,39 +73,11 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      * 变量名：detail
      * 是否必填：否
      * 类型：String(6000)
-     * 示例值： {  "goods_detail":[
-     *  {
-     * "goods_id":"iphone6s_16G",
-     * "wxpay_goods_id":"1001",
-     * "goods_name":"iPhone6s 16G",
-     * "goods_num":1,
-     * "price":528800,
-     * "goods_category":"123456",
-     * "body":"苹果手机"
-     * },
-     * {
-     * "goods_id":"iphone6s_32G",
-     * "wxpay_goods_id":"1002",
-     * "goods_name":"iPhone6s 32G",
-     * "quantity":1,
-     * "price":608800,
-     * "goods_category":"123789",
-     * "body":"苹果手机"
-     * }
-     * ]
-     * }
      * 描述：商品详细列表，使用Json格式，传输签名前请务必使用CDATA标签将JSON文本串保护起来。
-     * goods_detail []：
-     * └ goods_id String 必填 32 商品的编号
-     * └ wxpay_goods_id String 可选 32 微信支付定义的统一商品编号
-     * └ goods_name String 必填 256 商品名称
-     * └ goods_num Int 必填 商品数量
-     * └ price Int 必填 商品单价，单位为分
-     * └ goods_category String 可选 32 商品类目Id
-     * └ body String 可选 1000 商品描述信息
      * </pre>
      */
-    private String detail;
+    @MatrixIgnoreCopy
+    private List<MatrixPayUnifiedOrderRequestGoodsDetail> detail;
 
     /**
      * <pre>
@@ -223,7 +199,7 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      * JSAPI--公众号支付、NATIVE--原生扫码支付、APP--app支付，统一下单接口trade_type的传参可参考这里
      * </pre>
      */
-    private String tradeType;
+//    private String tradeType;
 
     /**
      * <pre>
@@ -333,35 +309,6 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      */
     public void setNotifyUrl(String notifyUrl) {
         this.notifyUrl = notifyUrl;
-    }
-
-    /**
-     * 如果配置中已经设置，可以不设置值.
-     *
-     * @param tradeType 交易类型
-     */
-    public void setTradeType(String tradeType) {
-        this.tradeType = tradeType;
-    }
-
-    @Override
-    protected void checkConstraints() throws WxPayException {
-        if (TradeType.NATIVE.equals(this.getTradeType()) && StringUtils.isBlank(this.getProductId())) {
-            throw new WxPayException("当trade_type是'NATIVE'时，需指定非空的product_id值");
-        }
-    }
-
-    @Override
-    public void checkAndSign(WxPayConfig config) throws WxPayException {
-        if (StringUtils.isBlank(this.getNotifyUrl())) {
-            this.setNotifyUrl(config.getNotifyUrl());
-        }
-
-        if (StringUtils.isBlank(this.getTradeType())) {
-            this.setTradeType(config.getTradeType());
-        }
-
-        super.checkAndSign(config);
     }
 
 }

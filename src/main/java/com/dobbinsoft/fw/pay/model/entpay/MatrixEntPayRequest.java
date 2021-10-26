@@ -1,6 +1,6 @@
 package com.dobbinsoft.fw.pay.model.entpay;
 
-import com.github.binarywang.wxpay.bean.request.BaseWxPayRequest;
+import com.dobbinsoft.fw.pay.model.request.MatrixBasePayRequest;
 import lombok.*;
 import me.chanjar.weixin.common.util.json.WxGsonBuilder;
 
@@ -17,7 +17,7 @@ import me.chanjar.weixin.common.util.json.WxGsonBuilder;
 @Builder(builderMethodName = "newBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
-public class MatrixEntPayRequest extends BaseWxPayRequest {
+public class MatrixEntPayRequest extends MatrixBasePayRequest {
   /**
    * <pre>
    * 字段名：公众账号appid.
@@ -142,11 +142,6 @@ public class MatrixEntPayRequest extends BaseWxPayRequest {
   private String spbillCreateIp;
 
   @Override
-  protected void checkConstraints() {
-
-  }
-
-  @Override
   public String getAppid() {
     return this.mchAppid;
   }
@@ -171,8 +166,4 @@ public class MatrixEntPayRequest extends BaseWxPayRequest {
     return WxGsonBuilder.create().toJson(this);
   }
 
-  @Override
-  protected String[] getIgnoredParamsForSign() {
-    return new String[]{"sign_type"};
-  }
 }

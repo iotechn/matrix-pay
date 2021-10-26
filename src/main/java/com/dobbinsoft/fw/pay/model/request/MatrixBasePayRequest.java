@@ -2,6 +2,7 @@ package com.dobbinsoft.fw.pay.model.request;
 
 import com.dobbinsoft.fw.pay.enums.PayChannelType;
 import com.dobbinsoft.fw.pay.enums.PayPlatformType;
+import com.dobbinsoft.fw.pay.exception.MatrixPayException;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.util.SignUtils;
@@ -131,27 +132,6 @@ public abstract class MatrixBasePayRequest implements Serializable {
         return new BigDecimal(yuan).setScale(2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).intValue();
     }
 
-    /**
-     * 检查请求参数内容，包括必填参数以及特殊约束.
-     */
-    private void checkFields() throws WxPayException {
-        //check required fields
-        try {
-            BeanUtils.checkRequiredFields(this);
-        } catch (WxErrorException e) {
-            throw new WxPayException(e.getError().getErrorMsg(), e);
-        }
-
-        //check other parameters
-        this.checkConstraints();
-    }
-
-    /**
-     * 检查约束情况.
-     *
-     * @throws WxPayException the wx pay exception
-     */
-    protected abstract void checkConstraints() throws WxPayException;
 
     /**
      * 如果配置中已经设置，可以不设置值.
@@ -199,72 +179,4 @@ public abstract class MatrixBasePayRequest implements Serializable {
         return xstream.toXML(this);
     }
 
-    /**
-     * 签名时，是否忽略appid.
-     *
-     * @return the boolean
-     */
-    protected boolean ignoreAppid() {
-        return false;
-    }
-
-    /**
-     * 签名时，忽略的参数.
-     *
-     * @return the string [ ]
-     */
-    protected String[] getIgnoredParamsForSign() {
-        return new String[0];
-    }
-
-    /**
-     * <pre>
-     * 检查参数，并设置签名.
-     * 1、检查参数（注意：子类实现需要检查参数的而外功能时，请在调用父类的方法前进行相应判断）
-     * 2、补充系统参数，如果未传入则从配置里读取
-     * 3、生成签名，并设置进去
-     * </pre>
-     *
-     * @param config 支付配置对象，用于读取相应系统配置信息
-     * @throws WxPayException the wx pay exception
-     */
-    public void checkAndSign(WxPayConfig config) throws WxPayException {
-        this.checkFields();
-
-        if (!ignoreAppid()) {
-            if (StringUtils.isBlank(getAppid())) {
-                this.setAppid(config.getAppId());
-            }
-        }
-
-        if (StringUtils.isBlank(getMchId())) {
-            this.setMchId(config.getMchId());
-        }
-
-        if (StringUtils.isBlank(getSubAppId())) {
-            this.setSubAppId(config.getSubAppId());
-        }
-
-        if (StringUtils.isBlank(getSubMchId())) {
-            this.setSubMchId(config.getSubMchId());
-        }
-
-        if (StringUtils.isBlank(getSignType())) {
-            if (config.getSignType() != null && !ALL_SIGN_TYPES.contains(config.getSignType())) {
-                throw new WxPayException("非法的signType配置：" + config.getSignType() + "，请检查配置！");
-            }
-            this.setSignType(StringUtils.trimToNull(config.getSignType()));
-        } else {
-            if (!ALL_SIGN_TYPES.contains(this.getSignType())) {
-                throw new WxPayException("非法的sign_type参数：" + this.getSignType());
-            }
-        }
-
-        if (StringUtils.isBlank(getNonceStr())) {
-            this.setNonceStr(String.valueOf(System.currentTimeMillis()));
-        }
-
-        //设置签名字段的值
-        this.setSign(SignUtils.createSign(this, this.getSignType(), config.getMchKey(), this.getIgnoredParamsForSign()));
-    }
 }

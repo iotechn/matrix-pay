@@ -64,19 +64,4 @@ public class MatrixPayDownloadFundFlowRequest extends MatrixBasePayRequest {
      */
     private String tarType;
 
-    @Override
-    protected void checkConstraints() throws WxPayException {
-        if (StringUtils.isNotBlank(this.getTarType()) && !TAR_TYPE_GZIP.equals(this.getTarType())) {
-            throw new WxPayException("tar_type值如果存在，只能为GZIP");
-        }
-
-        if (!ArrayUtils.contains(ACCOUNT_TYPES, this.getAccountType())) {
-            throw new WxPayException(String.format("account_type必须为%s其中之一,实际值：%s",
-                    Arrays.toString(ACCOUNT_TYPES), this.getAccountType()));
-        }
-        /**
-         * 目前仅支持HMAC-SHA256
-         */
-        this.setSignType(SIGN_TYPE_HMAC_SHA256);
-    }
 }

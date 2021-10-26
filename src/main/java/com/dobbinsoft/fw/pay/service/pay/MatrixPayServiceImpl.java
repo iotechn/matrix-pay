@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,10 +41,6 @@ public class MatrixPayServiceImpl implements MatrixPayService {
         this.wxPayService = new WxPayServiceImpl(payProperties);
     }
 
-    public void init() {
-        this.aliPayService.init();
-    }
-
     @Override
     public Object createOrder(MatrixPayUnifiedOrderRequest entity) throws PayServiceException {
         if (entity.getPayChannel() == PayChannelType.ALI) {
@@ -53,6 +50,12 @@ public class MatrixPayServiceImpl implements MatrixPayService {
         } else {
             throw new PayServiceException("支付渠道不支持");
         }
+    }
+
+    @Override
+    public void configWarmUp(List<PayProperties> list) {
+        // 仅支付宝需要预热
+        this.aliPayService.configWarmUp(list);
     }
 
     @Override
@@ -66,18 +69,14 @@ public class MatrixPayServiceImpl implements MatrixPayService {
     }
 
     @Override
-    public MatrixPayOrderQueryResult queryOrder(String transactionId, String outTradeNo) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
     public MatrixPayOrderQueryResult queryOrder(MatrixPayOrderQueryRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public MatrixPayOrderCloseResult closeOrder(String outTradeNo) throws MatrixPayException {
-        return null;
+        if (request.getPayChannel() == PayChannelType.ALI) {
+            return this.aliPayService.queryOrder(request);
+        } else if (request.getPayChannel() == PayChannelType.WX) {
+            return this.wxPayService.queryOrder(request);
+        } else {
+            throw new PayServiceException("支付渠道不支持");
+        }
     }
 
     @Override

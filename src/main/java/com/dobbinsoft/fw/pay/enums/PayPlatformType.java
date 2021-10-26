@@ -10,7 +10,9 @@ package com.dobbinsoft.fw.pay.enums;
 public enum PayPlatformType {
     APP(1, "APP"),
     WEB(2, "Web"),
-    MP(3, "小程序");
+    MP(3, "小程序"),
+    MICRO(4, "当面付");
+
 
     private int code;
     private String msg;

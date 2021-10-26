@@ -1,5 +1,6 @@
 package com.dobbinsoft.fw.pay.model.request;
 
+import com.dobbinsoft.fw.pay.exception.MatrixPayException;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
@@ -64,11 +65,4 @@ public class MatrixPayOrderQueryRequest extends MatrixBasePayRequest {
      */
     private String outTradeNo;
 
-    @Override
-    protected void checkConstraints() throws WxPayException {
-        if ((StringUtils.isBlank(transactionId) && StringUtils.isBlank(outTradeNo)) ||
-                (StringUtils.isNotBlank(transactionId) && StringUtils.isNotBlank(outTradeNo))) {
-            throw new WxPayException("transaction_id 和 out_trade_no 不能同时存在或同时为空，必须二选一");
-        }
-    }
 }

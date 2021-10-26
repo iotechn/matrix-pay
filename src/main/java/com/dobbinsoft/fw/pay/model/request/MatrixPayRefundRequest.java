@@ -153,27 +153,4 @@ public class MatrixPayRefundRequest extends MatrixBasePayRequest {
      */
     private String notifyUrl;
 
-    @Override
-    public void checkAndSign(WxPayConfig config) throws WxPayException {
-        if (StringUtils.isBlank(this.getOpUserId())) {
-            this.setOpUserId(config.getMchId());
-        }
-
-        super.checkAndSign(config);
-    }
-
-    @Override
-    protected void checkConstraints() throws WxPayException {
-        if (StringUtils.isNotBlank(this.getRefundAccount())) {
-            if (!ArrayUtils.contains(REFUND_ACCOUNT, this.getRefundAccount())) {
-                throw new WxPayException(
-                        String.format("refund_account目前必须为%s其中之一,实际值：%s", Arrays.toString(REFUND_ACCOUNT), this.getRefundAccount()));
-            }
-        }
-
-        if (StringUtils.isBlank(this.getOutTradeNo()) && StringUtils.isBlank(this.getTransactionId())) {
-            throw new WxPayException("transaction_id 和 out_trade_no 不能同时为空，必须提供一个");
-        }
-    }
-
 }

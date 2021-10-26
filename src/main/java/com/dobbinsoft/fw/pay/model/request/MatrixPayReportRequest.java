@@ -151,8 +151,4 @@ public class MatrixPayReportRequest extends MatrixBasePayRequest {
      */
     private String time;
 
-    @Override
-    protected void checkConstraints() {
-        //do nothing
-    }
 }

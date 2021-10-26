@@ -26,12 +26,14 @@ public class AliClient {
     /**
      * 将一些初始化耗时较多的信息缓存在上下文中
      */
-    private Context context = null;
+    private Context context;
+
+    private Config config;
 
     public AliClient(Config options) {
         try {
-            context = new Context(options, Factory.SDK_VERSION);
-
+            this.config = options;
+            this.context = new Context(options, Factory.SDK_VERSION);
             if (AlipayConstants.AliyunKMS.equals(context.getConfig(AlipayConstants.SIGN_PROVIDER_CONFIG_KEY))) {
                 context.setSigner(new AliyunKMSSigner(new AliyunKMSClient(TeaModel.buildMap(options))));
             }
@@ -51,7 +53,15 @@ public class AliClient {
          * @return 支付通用API Client
          */
         public com.alipay.easysdk.payment.common.Client Common() throws Exception {
-            return new com.alipay.easysdk.payment.common.Client(new Client(AliClient.this.context));
+            return new com.alipay.easysdk.payment.common.Client(new Client(AliClient.this.context)) {
+                @Override
+                public com.alipay.easysdk.payment.common.Client optional(String key, Object value) {
+                    if (value != null) {
+                        return this;
+                    }
+                    return super.optional(key, value);
+                }
+            };
         }
 
         /**
@@ -60,7 +70,15 @@ public class AliClient {
          * @return 花呗相关API Client
          */
         public com.alipay.easysdk.payment.huabei.Client Huabei() throws Exception {
-            return new com.alipay.easysdk.payment.huabei.Client(new Client(AliClient.this.context));
+            return new com.alipay.easysdk.payment.huabei.Client(new Client(AliClient.this.context)) {
+                @Override
+                public com.alipay.easysdk.payment.huabei.Client optional(String key, Object value) {
+                    if (value != null) {
+                        return this;
+                    }
+                    return super.optional(key, value);
+                }
+            };
         }
 
         /**
@@ -69,7 +87,15 @@ public class AliClient {
          * @return 当面付相关API Client
          */
         public com.alipay.easysdk.payment.facetoface.Client FaceToFace() throws Exception {
-            return new com.alipay.easysdk.payment.facetoface.Client(new Client(AliClient.this.context));
+            return new com.alipay.easysdk.payment.facetoface.Client(new Client(AliClient.this.context)) {
+                @Override
+                public com.alipay.easysdk.payment.facetoface.Client optional(String key, Object value) {
+                    if (value != null) {
+                        return this;
+                    }
+                    return super.optional(key, value);
+                }
+            };
         }
 
         /**
@@ -78,7 +104,15 @@ public class AliClient {
          * @return 电脑网站支付相关API Client
          */
         public com.alipay.easysdk.payment.page.Client Page() throws Exception {
-            return new com.alipay.easysdk.payment.page.Client(new Client(AliClient.this.context));
+            return new com.alipay.easysdk.payment.page.Client(new Client(AliClient.this.context)) {
+                @Override
+                public com.alipay.easysdk.payment.page.Client optional(String key, Object value) {
+                    if (value != null) {
+                        return this;
+                    }
+                    return super.optional(key, value);
+                }
+            };
         }
 
         /**
@@ -87,7 +121,15 @@ public class AliClient {
          * @return 手机网站支付相关API Client
          */
         public com.alipay.easysdk.payment.wap.Client Wap() throws Exception {
-            return new com.alipay.easysdk.payment.wap.Client(new Client(AliClient.this.context));
+            return new com.alipay.easysdk.payment.wap.Client(new Client(AliClient.this.context)) {
+                @Override
+                public com.alipay.easysdk.payment.wap.Client optional(String key, Object value) {
+                    if (value != null) {
+                        return this;
+                    }
+                    return super.optional(key, value);
+                }
+            };
         }
 
         /**
@@ -96,7 +138,15 @@ public class AliClient {
          * @return 手机APP支付相关API Client
          */
         public com.alipay.easysdk.payment.app.Client App() throws Exception {
-            return new com.alipay.easysdk.payment.app.Client(new Client(AliClient.this.context));
+            return new com.alipay.easysdk.payment.app.Client(new Client(AliClient.this.context)) {
+                @Override
+                public com.alipay.easysdk.payment.app.Client optional(String key, Object value) {
+                    if (value != null) {
+                        return this;
+                    }
+                    return super.optional(key, value);
+                }
+            };
         }
     }
 
@@ -224,4 +274,7 @@ public class AliClient {
         }
     }
 
+    public Config getConfig() {
+        return config;
+    }
 }
