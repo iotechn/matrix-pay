@@ -16,6 +16,6 @@ public interface PayCallbackHandler {
      * @param result
      * @return
      */
-    public abstract Object handle(MatrixPayOrderNotifyResult result);
+    Object handle(MatrixPayOrderNotifyResult result);
 
 }

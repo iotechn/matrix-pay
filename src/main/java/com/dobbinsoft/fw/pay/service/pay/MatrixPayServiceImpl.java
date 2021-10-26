@@ -85,11 +85,6 @@ public class MatrixPayServiceImpl implements MatrixPayService {
     }
 
     @Override
-    public MatrixPayUnifiedOrderResult unifiedOrder(MatrixPayUnifiedOrderRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
     public MatrixPayRefundResult refund(MatrixPayRefundRequest request) throws MatrixPayException {
         if (request.getPayChannel() == PayChannelType.ALI) {
             return this.aliPayService.refund(request);
@@ -276,7 +271,7 @@ public class MatrixPayServiceImpl implements MatrixPayService {
             PayCallbackContextHolder.set(payCallbackContext);
             result = aliPayService.checkSign(map);
             PayCallbackContextHolder.setPayId(result.getTransactionId());
-            result.setPayChannelType(PayChannelType.ALI);
+            result.setPayChannel(PayChannelType.ALI);
         } else {
             ServletInputStream is = null;
             try {
@@ -289,7 +284,7 @@ public class MatrixPayServiceImpl implements MatrixPayService {
                 PayCallbackContextHolder.set(payCallbackContext);
                 result = wxPayService.checkSign(str);
                 PayCallbackContextHolder.setPayId(result.getTransactionId());
-                result.setPayChannelType(PayChannelType.WX);
+                result.setPayChannel(PayChannelType.WX);
             } catch (IOException e) {
                 throw new PayServiceException("支付回调，网络异常");
             } finally {
