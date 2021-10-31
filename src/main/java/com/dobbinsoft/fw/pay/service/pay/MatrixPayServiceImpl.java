@@ -3,7 +3,6 @@ package com.dobbinsoft.fw.pay.service.pay;
 import com.dobbinsoft.fw.pay.config.PayProperties;
 import com.dobbinsoft.fw.pay.enums.PayChannelType;
 import com.dobbinsoft.fw.pay.exception.MatrixPayException;
-import com.dobbinsoft.fw.pay.exception.PayServiceException;
 import com.dobbinsoft.fw.pay.model.context.PayCallbackContext;
 import com.dobbinsoft.fw.pay.model.context.PayCallbackContextHolder;
 import com.dobbinsoft.fw.pay.model.coupon.*;
@@ -42,13 +41,13 @@ public class MatrixPayServiceImpl implements MatrixPayService {
     }
 
     @Override
-    public Object createOrder(MatrixPayUnifiedOrderRequest entity) throws PayServiceException {
+    public Object createOrder(MatrixPayUnifiedOrderRequest entity) throws MatrixPayException {
         if (entity.getPayChannel() == PayChannelType.ALI) {
             return this.aliPayService.createOrder(entity);
         } else if (entity.getPayChannel() == PayChannelType.WX) {
             return this.wxPayService.createOrder(entity);
         } else {
-            throw new PayServiceException("支付渠道不支持");
+            throw new MatrixPayException("支付渠道不支持");
         }
     }
 
@@ -75,13 +74,19 @@ public class MatrixPayServiceImpl implements MatrixPayService {
         } else if (request.getPayChannel() == PayChannelType.WX) {
             return this.wxPayService.queryOrder(request);
         } else {
-            throw new PayServiceException("支付渠道不支持");
+            throw new MatrixPayException("支付渠道不支持");
         }
     }
 
     @Override
     public MatrixPayOrderCloseResult closeOrder(MatrixPayOrderCloseRequest request) throws MatrixPayException {
-        return null;
+        if (request.getPayChannel() == PayChannelType.ALI) {
+            return this.aliPayService.closeOrder(request);
+        } else if (request.getPayChannel() == PayChannelType.WX) {
+            return this.wxPayService.closeOrder(request);
+        } else {
+            throw new MatrixPayException("支付渠道不支持");
+        }
     }
 
     @Override
@@ -91,13 +96,8 @@ public class MatrixPayServiceImpl implements MatrixPayService {
         } else if (request.getPayChannel() == PayChannelType.WX) {
             return this.wxPayService.refund(request);
         } else {
-            throw new PayServiceException("支付渠道不支持");
+            throw new MatrixPayException("支付渠道不支持");
         }
-    }
-
-    @Override
-    public MatrixPayRefundQueryResult refundQuery(String transactionId, String outTradeNo, String outRefundNo, String refundId) throws MatrixPayException {
-        return null;
     }
 
     @Override
@@ -192,7 +192,7 @@ public class MatrixPayServiceImpl implements MatrixPayService {
         } else if (request.getPayChannel() == PayChannelType.WX) {
             return this.wxPayService.micropay(request);
         } else {
-            throw new PayServiceException("支付渠道不支持");
+            throw new MatrixPayException("支付渠道不支持");
         }
     }
 
@@ -286,7 +286,7 @@ public class MatrixPayServiceImpl implements MatrixPayService {
                 PayCallbackContextHolder.setPayId(result.getTransactionId());
                 result.setPayChannel(PayChannelType.WX);
             } catch (IOException e) {
-                throw new PayServiceException("支付回调，网络异常");
+                throw new MatrixPayException("支付回调，网络异常");
             } finally {
                 if (is == null) {
                     try {

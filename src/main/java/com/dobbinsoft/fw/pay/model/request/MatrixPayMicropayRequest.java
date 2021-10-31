@@ -1,6 +1,9 @@
 package com.dobbinsoft.fw.pay.model.request;
 
+import com.dobbinsoft.fw.pay.anntation.MatrixIgnoreCopy;
 import lombok.*;
+
+import java.util.List;
 
 /**
  * <pre>
@@ -50,7 +53,8 @@ public class MatrixPayMicropayRequest extends MatrixBasePayRequest {
      * 示例值：
      * 描述：单品优惠功能字段，需要接入请见详细说明</pre>
      **/
-    private String detail;
+    @MatrixIgnoreCopy
+    private List<MatrixPayRequestGoodsDetail> detail;
 
     /**
      * <pre>
@@ -107,7 +111,7 @@ public class MatrixPayMicropayRequest extends MatrixBasePayRequest {
      * 是否必填：是
      * 类型：String(16)
      * 示例值：8.8.8.8
-     * 描述：调用微信支付API的机器IP
+     * 描述：调用支付API的机器IP
      * </pre>
      **/
     private String spbillCreateIp;
@@ -168,7 +172,10 @@ public class MatrixPayMicropayRequest extends MatrixBasePayRequest {
      * 是否必填：是
      * 类型：String(128)
      * 示例值：120061098828009406
-     * 描述：扫码支付授权码，设备读取用户微信中的条码或者二维码信息注：用户刷卡条形码规则：18位纯数字，以10、11、12、13、14、15开头）
+     * 描述：扫码支付授权码，设备读取用户客户端中的条码或者二维码信息注：
+     * 微信：18位纯数字以10、11、12、13、14、15开头）
+     * 支付宝：
+     * 云闪付
      * </pre>
      **/
     private String authCode;

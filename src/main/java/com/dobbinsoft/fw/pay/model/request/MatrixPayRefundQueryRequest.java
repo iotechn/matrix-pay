@@ -32,11 +32,11 @@ public class MatrixPayRefundQueryRequest extends MatrixBasePayRequest {
     //************以下四选一************
     /**
      * <pre>
-     * 微信订单号
+     * 支付平台订单号
      * transaction_id
      * String(32)
      * 1217752501201407033233368018
-     * 微信订单号
+     * 支付平台订单号
      * </pre>
      */
     private String transactionId;
@@ -58,18 +58,18 @@ public class MatrixPayRefundQueryRequest extends MatrixBasePayRequest {
      * out_refund_no
      * String(32)
      * 1217752501201407033233368018
-     * 商户侧传给微信的退款单号
+     * 商户侧传给支付平台的退款单号
      * </pre>
      */
     private String outRefundNo;
 
     /**
      * <pre>
-     * 微信退款单号
+     * 支付平台退款单号
      * refund_id
      * String(28)
      * 1217752501201407033233368018
-     * 微信生成的退款单号，在申请退款接口有返回
+     * 支付平台生成的退款单号，在申请退款接口有返回
      * </pre>
      */
     private String refundId;

@@ -1,13 +1,7 @@
 package com.dobbinsoft.fw.pay.model.request;
 
 import com.dobbinsoft.fw.pay.anntation.MatrixIgnoreCopy;
-import com.dobbinsoft.fw.pay.enums.PayPlatformType;
-import com.dobbinsoft.fw.pay.exception.MatrixPayException;
-import com.github.binarywang.wxpay.config.WxPayConfig;
-import com.github.binarywang.wxpay.constant.WxPayConstants.TradeType;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import lombok.*;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -77,7 +71,7 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      * </pre>
      */
     @MatrixIgnoreCopy
-    private List<MatrixPayUnifiedOrderRequestGoodsDetail> detail;
+    private List<MatrixPayRequestGoodsDetail> detail;
 
     /**
      * <pre>

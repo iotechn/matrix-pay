@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * <pre>
- * 微信支付-退款查询返回结果
+ * 支付-退款查询返回结果
  * Created by Binary Wang on 2016-11-24.
  * </pre>
  *
@@ -31,12 +31,12 @@ public class MatrixPayRefundQueryResult extends MatrixBasePayResult {
 
     /**
      * <pre>
-     * 字段名：微信订单号.
+     * 字段名：支付平台订单号.
      * 变量名：transaction_id
      * 是否必填：是
      * 类型：String(32)
      * 示例值：1217752501201407033233368018
-     * 描述：微信订单号
+     * 描述：支付平台订单号
      * </pre>
      */
     private String transactionId;
@@ -116,49 +116,6 @@ public class MatrixPayRefundQueryResult extends MatrixBasePayResult {
     private List<RefundRecord> refundRecords;
 
     /**
-     * 组装生成退款记录属性的内容.
-     */
-    public void composeRefundRecords() {
-        if (this.refundCount != null && this.refundCount > 0) {
-            this.refundRecords = Lists.newArrayList();
-
-            for (int i = 0; i < this.refundCount; i++) {
-                RefundRecord refundRecord = new RefundRecord();
-                this.refundRecords.add(refundRecord);
-
-                refundRecord.setOutRefundNo(this.getXmlValue("xml/out_refund_no_" + i));
-                refundRecord.setRefundId(this.getXmlValue("xml/refund_id_" + i));
-                refundRecord.setRefundChannel(this.getXmlValue("xml/refund_channel_" + i));
-                refundRecord.setRefundFee(this.getXmlValueAsInt("xml/refund_fee_" + i));
-                refundRecord.setSettlementRefundFee(this.getXmlValueAsInt("xml/settlement_refund_fee_" + i));
-                refundRecord.setCouponRefundFee(this.getXmlValueAsInt("xml/coupon_refund_fee_" + i));
-                refundRecord.setCouponRefundCount(this.getXmlValueAsInt("xml/coupon_refund_count_" + i));
-                refundRecord.setRefundStatus(this.getXmlValue("xml/refund_status_" + i));
-                refundRecord.setRefundRecvAccount(this.getXmlValue("xml/refund_recv_accout_" + i));
-                refundRecord.setRefundSuccessTime(this.getXmlValue("xml/refund_success_time_" + i));
-
-                if (refundRecord.getCouponRefundCount() == null || refundRecord.getCouponRefundCount() == 0) {
-                    continue;
-                }
-
-                List<MatrixPayRefundCouponInfo> coupons = Lists.newArrayList();
-                for (int j = 0; j < refundRecord.getCouponRefundCount(); j++) {
-                    coupons.add(
-                            new MatrixPayRefundCouponInfo(
-                                    this.getXmlValue("xml/coupon_refund_id_" + i + "_" + j),
-                                    this.getXmlValueAsInt("xml/coupon_refund_fee_" + i + "_" + j),
-                                    this.getXmlValue("xml/coupon_type_" + i + "_" + j)
-                            )
-                    );
-                }
-
-                refundRecord.setRefundCoupons(coupons);
-            }
-
-        }
-    }
-
-    /**
      * The type Refund record.
      */
     @Data
@@ -180,12 +137,12 @@ public class MatrixPayRefundQueryResult extends MatrixBasePayResult {
 
         /**
          * <pre>
-         * 字段名：微信退款单号.
+         * 字段名：支付平台退款单号.
          * 变量名：refund_id_$n
          * 是否必填：是
          * 类型：String(28)
          * 示例值：1217752501201407033233368018
-         * 描述：微信退款单号
+         * 描述：支付平台退款单号
          * </pre>
          */
         private String refundId;

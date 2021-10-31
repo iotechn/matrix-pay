@@ -39,12 +39,12 @@ public class MatrixPayRefundRequest extends MatrixBasePayRequest {
     private String deviceInfo;
     /**
      * <pre>
-     * 字段名：微信订单号.
+     * 字段名：支付平台订单号.
      * 变量名：transaction_id
      * 是否必填：跟out_trade_no二选一
      * 类型：String(28)
      * 示例值：1217752501201400000000000000
-     * 描述：微信生成的订单号，在支付通知中有返回
+     * 描述：支付平台生成的订单号，在支付通知中有返回
      * </pre>
      */
     private String transactionId;
@@ -55,7 +55,7 @@ public class MatrixPayRefundRequest extends MatrixBasePayRequest {
      * 是否必填：跟transaction_id二选一
      * 类型：String(32)
      * 示例值：1217752501201400000000000000
-     * 描述：商户侧传给微信的订单号
+     * 描述：商户侧传给支付平台的订单号
      * </pre>
      */
     private String outTradeNo;
@@ -114,19 +114,6 @@ public class MatrixPayRefundRequest extends MatrixBasePayRequest {
      * </pre>
      */
     private String opUserId;
-    /**
-     * <pre>
-     * 字段名：退款资金来源.
-     * 变量名：refund_account
-     * 是否必填：否
-     * 类型：String(30)
-     * 示例值：REFUND_SOURCE_RECHARGE_FUNDS
-     * 描述：仅针对老资金流商户使用，
-     * <li>REFUND_SOURCE_UNSETTLED_FUNDS---未结算资金退款（默认使用未结算资金退款），
-     * <li>REFUND_SOURCE_RECHARGE_FUNDS---可用余额退款
-     * </pre>
-     */
-    private String refundAccount;
 
     /**
      * <pre>
@@ -139,18 +126,5 @@ public class MatrixPayRefundRequest extends MatrixBasePayRequest {
      * </pre>
      */
     private String refundDesc;
-
-    /**
-     * <pre>
-     * 字段名：退款结果通知url.
-     * 变量名：notify_url
-     * 是否必填：否
-     * 类型：String(256)
-     * 示例值：https://weixin.qq.com/notify/
-     * 描述：	异步接收微信支付退款结果通知的回调地址，通知URL必须为外网可访问的url，不允许带参数
-     * 如果参数中传了notify_url，则商户平台上配置的回调地址将不会生效。
-     * </pre>
-     */
-    private String notifyUrl;
 
 }

@@ -103,45 +103,25 @@ public interface MatrixPayService {
      * </pre>
      *
      * @param request 请求对象
-     * @return 退款操作结果 wx pay refund result
-     * @throws MatrixPayException the wx pay exception
+     * @return 退款操作结果 pay refund result
+     * @throws MatrixPayException the pay exception
      */
     MatrixPayRefundResult refund(MatrixPayRefundRequest request) throws MatrixPayException;
 
     /**
      * <pre>
-     * 微信支付-查询退款.
+     * 支付-查询退款（适合于需要自定义子商户号和子商户appid的情形）.
      * 应用场景：
      *  提交退款申请后，通过调用该接口查询退款状态。退款有一定延时，用零钱支付的退款20分钟内到账，
      *  银行卡支付的退款3个工作日后重新查询退款状态。
-     * 详见 https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_5
-     * 接口链接：https://api.mch.weixin.qq.com/pay/refundquery
-     * </pre>
-     * 以下四个参数四选一
-     *
-     * @param transactionId 微信订单号
-     * @param outTradeNo    商户订单号
-     * @param outRefundNo   商户退款单号
-     * @param refundId      微信退款单号
-     * @return 退款信息 wx pay refund query result
-     * @throws MatrixPayException the wx pay exception
-     */
-    MatrixPayRefundQueryResult refundQuery(String transactionId, String outTradeNo, String outRefundNo, String refundId)
-            throws MatrixPayException;
-
-    /**
-     * <pre>
-     * 微信支付-查询退款（适合于需要自定义子商户号和子商户appid的情形）.
-     * 应用场景：
-     *  提交退款申请后，通过调用该接口查询退款状态。退款有一定延时，用零钱支付的退款20分钟内到账，
-     *  银行卡支付的退款3个工作日后重新查询退款状态。
-     * 详见 https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_5
-     * 接口链接：https://api.mch.weixin.qq.com/pay/refundquery
+     * 微信详见 https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_5
+     * 支付宝详见
+     * 云闪付详见
      * </pre>
      *
-     * @param request 微信退款单号
-     * @return 退款信息 wx pay refund query result
-     * @throws MatrixPayException the wx pay exception
+     * @param request 退款单号
+     * @return 退款信息 pay refund query result
+     * @throws MatrixPayException the pay exception
      */
     MatrixPayRefundQueryResult refundQuery(MatrixPayRefundQueryRequest request) throws MatrixPayException;
 
@@ -405,18 +385,18 @@ public interface MatrixPayService {
     /**
      * <pre>
      * 提交刷卡支付.
-     * 文档地址：https://pay.weixin.qq.com/wiki/doc/api/micropay.php?chapter=9_10&index=1
+     * 微信详见：https://pay.weixin.qq.com/wiki/doc/api/micropay.php?chapter=9_10&index=1
+     * 支付宝详见：
+     * 云闪付详见：
      * 应用场景：
-     * 收银员使用扫码设备读取微信用户刷卡授权码以后，二维码或条码信息传送至商户收银台，由商户收银台或者商户后台调用该接口发起支付。
-     * 提醒1：提交支付请求后微信会同步返回支付结果。当返回结果为“系统错误”时，商户系统等待5秒后调用【查询订单API】，查询支付实际交易结果；当返回结果为“USERPAYING”时，商户系统可设置间隔时间(建议10秒)重新查询支付结果，直到支付成功或超时(建议30秒)；
+     * 收银员使用扫码设备读取用户刷卡授权码以后，二维码或条码信息传送至商户收银台，由商户收银台或者商户后台调用该接口发起支付。
+     * 提醒1：提交支付请求后支付平台会同步返回支付结果。当返回结果为“系统错误”时，商户系统等待5秒后调用【查询订单API】，查询支付实际交易结果；当返回结果为“USERPAYING”时，商户系统可设置间隔时间(建议10秒)重新查询支付结果，直到支付成功或超时(建议30秒)；
      * 提醒2：在调用查询接口返回后，如果交易状况不明晰，请调用【撤销订单API】，此时如果交易失败则关闭订单，该单不能再支付成功；如果交易成功，则将扣款退回到用户账户。当撤销无返回或错误时，请再次调用。注意：请勿扣款后立即调用【撤销订单API】,建议至少15秒后再调用。撤销订单API需要双向证书。
-     * 接口地址：   https://api.mch.weixin.qq.com/pay/micropay
-     * 是否需要证书：不需要。
      * </pre>
      *
      * @param request the request
-     * @return the wx pay micropay result
-     * @throws MatrixPayException the wx pay exception
+     * @return the pay micropay result
+     * @throws MatrixPayException the pay exception
      */
     MatrixPayMicropayResult micropay(MatrixPayMicropayRequest request) throws MatrixPayException;
 

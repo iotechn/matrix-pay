@@ -3,7 +3,7 @@ package com.dobbinsoft.fw.pay.model.request;
 import lombok.Data;
 
 @Data
-public class MatrixPayUnifiedOrderRequestGoodsDetail {
+public class MatrixPayRequestGoodsDetail {
 
     /**
      * 必填 32 商品的编号

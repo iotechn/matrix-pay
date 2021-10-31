@@ -44,18 +44,6 @@ public class MatrixPayMicropayResult extends MatrixBasePayResult {
 
     /**
      * <pre>
-     * 交易类型.
-     * trade_type
-     * 是
-     * String(16)
-     * MICROPAY
-     * 支付类型为MICROPAY(即扫码支付)
-     * </pre>
-     **/
-    private String tradeType;
-
-    /**
-     * <pre>
      * 付款银行.
      * bank_type
      * 是
