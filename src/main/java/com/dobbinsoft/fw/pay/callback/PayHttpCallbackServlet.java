@@ -40,9 +40,4 @@ public class PayHttpCallbackServlet extends HttpServlet {
             }
         }
     }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        this.doPost(req, resp);
-    }
 }
