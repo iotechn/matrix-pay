@@ -1,6 +1,8 @@
 package com.dobbinsoft.fw.pay.model.request;
 
 import com.dobbinsoft.fw.pay.anntation.MatrixIgnoreCopy;
+import com.dobbinsoft.fw.pay.anntation.MatrixNotNull;
+import com.dobbinsoft.fw.pay.enums.PayChannelType;
 import lombok.*;
 
 import java.util.List;
@@ -9,10 +11,8 @@ import java.util.List;
  * <pre>
  * 统一下单请求参数对象.
  * 参考文档：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1
- * Created by Binary Wang on 2016/9/25.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -20,9 +20,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
-    private static final long serialVersionUID = 4611350167813931828L;
 
-
+    private static final long serialVersionUID = -3173551488619526785L;
     /**
      * <pre>
      * 字段名：接口版本号.
@@ -59,6 +58,7 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      * 描述：商品简单描述，该字段须严格按照规范传递，具体请见参数规定
      * </pre>
      */
+    @MatrixNotNull(msg = "商品描述不可为空 [body]")
     private String body;
 
     /**
@@ -119,6 +119,7 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      * 描述：订单总金额，单位为分，详见支付金额
      * </pre>
      */
+    @MatrixNotNull(msg = "订单总金额不能为空 [totalFee]")
     private Integer totalFee;
 
     /**
@@ -131,6 +132,7 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      * 描述：APP和网页支付提交用户端ip，Native支付填调用微信支付API的机器IP。
      * </pre>
      */
+    @MatrixNotNull(channels = {PayChannelType.WX}, msg = "{channel}客户端IP不能为空 [spbillCreateIp]")
     private String spbillCreateIp;
 
     /**

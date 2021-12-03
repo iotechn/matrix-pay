@@ -6,10 +6,8 @@ import lombok.*;
 /**
  * <pre>
  * 查询代金券信息请求对象类
- * Created by Binary Wang on 2017-7-15.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

@@ -6,10 +6,8 @@ import lombok.*;
 /**
  * <pre>
  * 转换短链接请求对象类
- * Created by Binary Wang on 2017-3-27.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -17,6 +15,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatrixPayShorturlRequest extends MatrixBasePayRequest {
+    private static final long serialVersionUID = 6132876278336201100L;
     /**
      * <pre>
      * URL链接

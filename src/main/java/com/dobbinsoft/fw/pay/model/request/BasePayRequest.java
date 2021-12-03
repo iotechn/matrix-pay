@@ -9,16 +9,13 @@ import java.io.Serializable;
 /**
  * <pre>
  *  微信支付请求对象共用的参数存放类
- * Created by Binary Wang on 2016-10-24.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 public abstract class BasePayRequest implements Serializable {
 
-    private static final long serialVersionUID = -4766915659779847060L;
-
+    private static final long serialVersionUID = -7362095583633100077L;
     /**
      * 支付渠道
      */

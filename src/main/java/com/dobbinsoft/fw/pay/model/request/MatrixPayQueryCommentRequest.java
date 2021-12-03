@@ -6,10 +6,8 @@ import lombok.*;
 /**
  * <pre>
  *  拉取订单评价数据接口的请求参数封装类.
- *  Created by BinaryWang on 2017/9/2.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -17,8 +15,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatrixPayQueryCommentRequest extends MatrixBasePayRequest {
-    private static final long serialVersionUID = 2633600418272768186L;
 
+    private static final long serialVersionUID = -7457858475975905137L;
     /**
      * <pre>
      * 字段名：开始时间.

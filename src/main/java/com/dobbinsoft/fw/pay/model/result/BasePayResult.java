@@ -8,10 +8,8 @@ import java.io.Serializable;
 /**
  * <pre>
  * 微信支付结果共用属性类.
- * Created by Binary Wang on 2016-10-24.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 public abstract class BasePayResult implements Serializable {

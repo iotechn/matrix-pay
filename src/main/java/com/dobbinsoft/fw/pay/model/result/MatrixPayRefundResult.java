@@ -13,7 +13,6 @@ import java.util.List;
  * https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_4
  * </pre>
  *
- * @author liukaitj & Binary Wang
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

@@ -11,13 +11,15 @@ public interface PayProperties {
 
     /***************** 微信支付所需配置 *********************/
 
+    public String getWxAppId();
+
     public String getWxMchId();
 
     public String getWxMchKey();
 
     public String getWxNotifyUrl();
 
-    public String getWxKeyPath();
+    public byte[] getWxCert();
 
     /***************** 阿里支付所需配置 *********************/
 

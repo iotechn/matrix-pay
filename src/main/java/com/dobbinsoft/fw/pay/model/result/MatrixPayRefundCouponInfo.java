@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 /**
  * <pre>
  *  退款代金券信息.
- *  Created by BinaryWang on 2018/4/21.
  * </pre>
  *
- * @author Binary Wang
  */
 @Data
 @NoArgsConstructor

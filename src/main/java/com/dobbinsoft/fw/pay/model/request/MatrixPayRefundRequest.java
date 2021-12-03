@@ -12,10 +12,8 @@ import java.util.Arrays;
 /**
  * <pre>
  * 微信支付-申请退款请求参数
- * Created by Binary Wang on 2016-10-08.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -25,6 +23,7 @@ import java.util.Arrays;
 public class MatrixPayRefundRequest extends MatrixBasePayRequest {
     private static final String[] REFUND_ACCOUNT = new String[]{
             RefundAccountSource.RECHARGE_FUNDS, RefundAccountSource.UNSETTLED_FUNDS};
+    private static final long serialVersionUID = -1999065466412312068L;
 
     /**
      * <pre>

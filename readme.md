@@ -54,10 +54,7 @@ mvn install -Dmaven.test.skip=true
 
 #### 四、完整文档
 
-Matrix Pay 官网与联系：
-
 Matrix Pay API文档：
 
 #### 五、贡献 & 社区
-
-Matrix Pay 在API适配中，也许您所需要适配的字段，映射存在偏差或框架存在BUG，您可以直接在仓库中发布PR。本项目欢迎所有开发者一起维护，并永久开源。
+Matrix Pay 在API适配中，也许您所需要适配的字段，映射存在偏差或框架存在BUG，您可以直接在仓库中发布Pull Request。本项目欢迎所有开发者一起维护，并永久开源。

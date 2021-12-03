@@ -2,37 +2,21 @@ package com.dobbinsoft.fw.pay.model.request;
 
 import com.dobbinsoft.fw.pay.enums.PayChannelType;
 import com.dobbinsoft.fw.pay.enums.PayPlatformType;
-import com.dobbinsoft.fw.pay.exception.MatrixPayException;
-import com.github.binarywang.wxpay.config.WxPayConfig;
-import com.github.binarywang.wxpay.exception.WxPayException;
-import com.github.binarywang.wxpay.util.SignUtils;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import lombok.Data;
-import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.common.util.BeanUtils;
 import me.chanjar.weixin.common.util.json.WxGsonBuilder;
-import me.chanjar.weixin.common.util.xml.XStreamInitializer;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import static com.github.binarywang.wxpay.constant.WxPayConstants.SignType.ALL_SIGN_TYPES;
-
 /**
  * <pre>
  *  微信支付请求对象共用的参数存放类
- * Created by Binary Wang on 2016-10-24.
  * </pre>
- *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 public abstract class MatrixBasePayRequest implements Serializable {
 
-    private static final long serialVersionUID = -4766915659779847060L;
-
+    private static final long serialVersionUID = -7550724004813511502L;
     /**
      * 支付渠道
      */
@@ -53,7 +37,7 @@ public abstract class MatrixBasePayRequest implements Serializable {
      * 描述：微信分配的公众账号ID（企业号corpid即为此appId）
      * </pre>
      */
-    protected String appid;
+    private String appid;
     /**
      * <pre>
      * 字段名：商户号.
@@ -64,7 +48,7 @@ public abstract class MatrixBasePayRequest implements Serializable {
      * 描述：微信支付分配的商户号
      * </pre>
      */
-    protected String mchId;
+    private String mchId;
     /**
      * <pre>
      * 字段名：服务商模式下的子商户公众账号ID.
@@ -75,7 +59,7 @@ public abstract class MatrixBasePayRequest implements Serializable {
      * 描述：微信分配的子商户公众账号ID
      * </pre>
      */
-    protected String subAppId;
+    private String subAppId;
     /**
      * <pre>
      * 字段名：服务商模式下的子商户号.
@@ -86,7 +70,7 @@ public abstract class MatrixBasePayRequest implements Serializable {
      * 描述：微信支付分配的子商户号，开发者模式下必填
      * </pre>
      */
-    protected String subMchId;
+    private String subMchId;
     /**
      * <pre>
      * 字段名：随机字符串.
@@ -97,7 +81,7 @@ public abstract class MatrixBasePayRequest implements Serializable {
      * 描述：随机字符串，不长于32位。推荐随机数生成算法
      * </pre>
      */
-    protected String nonceStr;
+    private String nonceStr;
     /**
      * <pre>
      * 字段名：签名.
@@ -108,7 +92,7 @@ public abstract class MatrixBasePayRequest implements Serializable {
      * 描述：签名，详见签名生成算法
      * </pre>
      */
-    protected String sign;
+    private String sign;
 
     /**
      * <pre>
@@ -163,20 +147,6 @@ public abstract class MatrixBasePayRequest implements Serializable {
     @Override
     public String toString() {
         return WxGsonBuilder.create().toJson(this);
-    }
-
-    /**
-     * To xml string.
-     *
-     * @return the string
-     */
-    public String toXML() {
-        XStream xstream = XStreamInitializer.getInstance();
-        //涉及到服务商模式的两个参数，在为空值时置为null，以免在请求时将空值传给微信服务器
-        this.setSubAppId(StringUtils.trimToNull(this.getSubAppId()));
-        this.setSubMchId(StringUtils.trimToNull(this.getSubMchId()));
-        xstream.processAnnotations(this.getClass());
-        return xstream.toXML(this);
     }
 
 }

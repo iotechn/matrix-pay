@@ -11,10 +11,8 @@ import lombok.*;
  *   示例值
  *   类型
  *   说明
- * Created by Binary Wang on 2016-11-28.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -23,6 +21,7 @@ import lombok.*;
 @AllArgsConstructor
 public class MatrixPayRedpackQueryRequest extends MatrixBasePayRequest {
 
+    private static final long serialVersionUID = -597674982497146841L;
     /**
      * 商户订单号
      * mch_billno

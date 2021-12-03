@@ -25,6 +25,7 @@ public class MatrixPayDownloadFundFlowRequest extends MatrixBasePayRequest {
     private static final String[] ACCOUNT_TYPES = new String[]{AccountType.BASIC, AccountType.OPERATION, AccountType.FEES};
     private static final String SIGN_TYPE_HMAC_SHA256 = "HMAC-SHA256";
     private static final String TAR_TYPE_GZIP = "GZIP";
+    private static final long serialVersionUID = -397384489175016281L;
 
     /**
      * <pre>

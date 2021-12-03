@@ -14,7 +14,6 @@ import lombok.*;
  * <li>描述
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -22,8 +21,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatrixPayReportRequest extends MatrixBasePayRequest {
-    private static final long serialVersionUID = 2667579776376527663L;
 
+    private static final long serialVersionUID = -8566380917316364162L;
     /**
      * <pre>
      * 设备号.

@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 /**
  * <pre>
  * 企业付款到银行卡的响应结果.
- * Created by Binary Wang on 2017/12/21.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

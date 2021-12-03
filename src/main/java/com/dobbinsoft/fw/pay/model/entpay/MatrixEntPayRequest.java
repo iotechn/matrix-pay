@@ -7,10 +7,8 @@ import me.chanjar.weixin.common.util.json.WxGsonBuilder;
 /**
  * <pre>
  * 企业付款请求对象.
- * Created by Binary Wang on 2016/10/02.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 /**
  * <pre>
  * 发送代金券响应结果类
- * Created by Binary Wang on 2017-7-15.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

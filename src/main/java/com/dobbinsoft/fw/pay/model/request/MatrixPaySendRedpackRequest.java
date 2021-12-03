@@ -4,9 +4,7 @@ import lombok.*;
 
 /**
  * 发送红包请求参数对象.
- * Created by Binary Wang on 2016/9/24.
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -14,8 +12,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatrixPaySendRedpackRequest extends MatrixBasePayRequest {
-    private static final long serialVersionUID = -2035425086824987567L;
 
+    private static final long serialVersionUID = -5097684621743334582L;
     /**
      * mch_billno.
      * 商户订单号（每个订单号必须唯一）

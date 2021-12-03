@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 /**
  * <pre>
  * 转换短链接结果对象类
- * Created by Binary Wang on 2017-3-27.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

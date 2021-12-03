@@ -2,9 +2,12 @@ package com.dobbinsoft.fw.pay.model.request;
 
 import lombok.Data;
 
-@Data
-public class MatrixPayRequestGoodsDetail {
+import java.io.Serializable;
 
+@Data
+public class MatrixPayRequestGoodsDetail implements Serializable {
+
+    private static final long serialVersionUID = 5561218000553885190L;
     /**
      * 必填 32 商品的编号
      */

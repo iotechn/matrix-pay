@@ -7,10 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * <pre>
  * 撤销订单请求类
- * Created by Binary Wang on 2017-3-23.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -19,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 @AllArgsConstructor
 public class MatrixPayOrderReverseRequest extends MatrixBasePayRequest {
 
+    private static final long serialVersionUID = 2329190322989767093L;
     /**
      * <pre>
      * 微信订单号

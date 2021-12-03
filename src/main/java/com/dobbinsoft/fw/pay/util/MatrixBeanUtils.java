@@ -4,6 +4,7 @@ import com.dobbinsoft.fw.pay.anntation.MatrixIgnoreCopy;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,17 +52,25 @@ public class MatrixBeanUtils {
         Class<?> targetClass = target.getClass();
         List<Field> sourceFields = new ArrayList<>();
         for (Field f : sourceClass.getDeclaredFields()) {
-            sourceFields.add(f);
+            if (!Modifier.isStatic(f.getModifiers())) {
+                sourceFields.add(f);
+            }
         }
         for (Field f : sourceClass.getSuperclass().getDeclaredFields()) {
-            sourceFields.add(f);
+            if (!Modifier.isStatic(f.getModifiers())) {
+                sourceFields.add(f);
+            }
         }
         List<Field> targetFields = new ArrayList<>();
         for (Field f : targetClass.getDeclaredFields()) {
-            targetFields.add(f);
+            if (!Modifier.isStatic(f.getModifiers())) {
+                targetFields.add(f);
+            }
         }
         for (Field f : targetClass.getSuperclass().getDeclaredFields()) {
-            targetFields.add(f);
+            if (!Modifier.isStatic(f.getModifiers())) {
+                targetFields.add(f);
+            }
         }
         Map<String, Field> targetMap = targetFields.stream().collect(Collectors.toMap(Field::getName, v -> v));
         for (Field sourceField : sourceFields) {

@@ -21,10 +21,8 @@ import java.nio.charset.StandardCharsets;
 /**
  * <pre>
  *  退款结果通知对象.
- *  Created by BinaryWang on 2017/8/27.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -33,35 +31,6 @@ import java.nio.charset.StandardCharsets;
 public class MatrixPayRefundNotifyResult extends BaseWxPayResult implements Serializable {
     private static final long serialVersionUID = 4651725860079259186L;
 
-    /**
-     * 从xml字符串创建bean对象.
-     *
-     * @param xmlString xml字符串
-     * @param mchKey    商户密钥
-     * @return the wx pay refund notify result
-     * @throws WxPayException the wx pay exception
-     */
-    public static MatrixPayRefundNotifyResult fromXML(String xmlString, String mchKey) throws WxPayException {
-        MatrixPayRefundNotifyResult result = BaseWxPayResult.fromXML(xmlString, MatrixPayRefundNotifyResult.class);
-        if (WxPayConstants.ResultCode.FAIL.equals(result.getReturnCode())) {
-            return result;
-        }
-
-        String reqInfoString = result.getReqInfoString();
-        try {
-            final String keyMd5String = DigestUtils.md5Hex(mchKey).toLowerCase();
-            SecretKeySpec key = new SecretKeySpec(keyMd5String.getBytes(StandardCharsets.UTF_8), "AES");
-
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            result.setReqInfo(ReqInfo.fromXML(new String(cipher.doFinal(Base64.decodeBase64(reqInfoString)),
-                    StandardCharsets.UTF_8)));
-        } catch (Exception e) {
-            throw new WxPayException("解密退款通知加密信息时出错", e);
-        }
-
-        return result;
-    }
 
     /**
      * <pre>
@@ -243,17 +212,6 @@ public class MatrixPayRefundNotifyResult extends BaseWxPayResult implements Seri
          */
         private String refundRequestSource;
 
-        /**
-         * 从xml字符串构造ReqInfo对象.
-         *
-         * @param xmlString xml字符串
-         * @return ReqInfo对象
-         */
-        public static ReqInfo fromXML(String xmlString) {
-            XStream xstream = XStreamInitializer.getInstance();
-            xstream.processAnnotations(ReqInfo.class);
-            return (ReqInfo) xstream.fromXML(xmlString);
-        }
     }
 
 }

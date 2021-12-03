@@ -6,10 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * <pre>
- * Created by Binary Wang on 2016-11-24.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -17,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatrixPayRefundQueryRequest extends MatrixBasePayRequest {
+    private static final long serialVersionUID = -5616136370008637266L;
     /**
      * <pre>
      * 设备号

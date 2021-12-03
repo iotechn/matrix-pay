@@ -1,14 +1,10 @@
 package com.dobbinsoft.fw.pay.model.request;
 
-import com.dobbinsoft.fw.pay.exception.MatrixPayException;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import lombok.*;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * <pre>
  * 订单查询请求对象
- * Created by Binary Wang on 2016-10-24.
  * 注释中各行每个字段描述对应如下：
  * <li>字段名
  * <li>变量名
@@ -17,8 +13,6 @@ import org.apache.commons.lang3.StringUtils;
  * <li>示例值
  * <li>描述
  * </pre>
- *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -27,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 @AllArgsConstructor
 public class MatrixPayOrderQueryRequest extends MatrixBasePayRequest {
 
+    private static final long serialVersionUID = 6798898450357743059L;
     /**
      * <pre>
      * 字段名：接口版本号.

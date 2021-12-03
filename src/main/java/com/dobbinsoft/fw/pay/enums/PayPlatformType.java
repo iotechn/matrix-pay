@@ -11,7 +11,8 @@ public enum PayPlatformType {
     APP(1, "APP"),
     WEB(2, "Web"),
     MP(3, "小程序"),
-    MICRO(4, "当面付");
+    MICRO(4, "当面付"),
+    WAP(5, "手机网站支付(微信只支持微信浏览器)");
 
 
     private int code;

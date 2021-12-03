@@ -1,22 +1,12 @@
 package com.dobbinsoft.fw.pay.model.notify;
 
-import com.dobbinsoft.fw.pay.exception.MatrixPayException;
 import com.dobbinsoft.fw.pay.model.result.MatrixBasePayResult;
-import com.github.binarywang.wxpay.constant.WxPayConstants;
-import com.github.binarywang.wxpay.converter.WxPayOrderNotifyResultConverter;
-import com.github.binarywang.wxpay.exception.WxPayException;
-import com.github.binarywang.wxpay.service.WxPayService;
-import com.github.binarywang.wxpay.util.SignUtils;
-import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import me.chanjar.weixin.common.util.json.WxGsonBuilder;
-import me.chanjar.weixin.common.util.xml.XStreamInitializer;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 支付结果通用通知 ，文档见：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_7
@@ -267,45 +257,4 @@ public class MatrixPayOrderNotifyResult extends MatrixBasePayResult {
      */
     private String version;
 
-    @Override
-    public void checkResult(WxPayService wxPayService, String signType, boolean checkSuccess) throws MatrixPayException {
-        //防止伪造成功通知
-        if (WxPayConstants.ResultCode.SUCCESS.equals(getReturnCode()) && getSign() == null) {
-            throw new MatrixPayException("伪造的通知！");
-        }
-
-        super.checkResult(wxPayService, signType, checkSuccess);
-    }
-
-    /**
-     * From xml wx pay order notify result.
-     *
-     * @param xmlString the xml string
-     * @return the wx pay order notify result
-     */
-    public static MatrixPayOrderNotifyResult fromXML(String xmlString) {
-        XStream xstream = XStreamInitializer.getInstance();
-        xstream.processAnnotations(MatrixPayOrderNotifyResult.class);
-        xstream.registerConverter(new WxPayOrderNotifyResultConverter(xstream.getMapper(), xstream.getReflectionProvider()));
-        MatrixPayOrderNotifyResult result = (MatrixPayOrderNotifyResult) xstream.fromXML(xmlString);
-        result.setXmlString(xmlString);
-        return result;
-    }
-
-    @Override
-    public Map<String, String> toMap() {
-        Map<String, String> resultMap = SignUtils.xmlBean2Map(this);
-        if (this.getCouponCount() != null && this.getCouponCount() > 0) {
-            for (int i = 0; i < this.getCouponCount(); i++) {
-                MatrixPayOrderNotifyCoupon coupon = couponList.get(i);
-                resultMap.putAll(coupon.toMap(i));
-            }
-        }
-        return resultMap;
-    }
-
-    @Override
-    public String toString() {
-        return WxGsonBuilder.create().toJson(this);
-    }
 }

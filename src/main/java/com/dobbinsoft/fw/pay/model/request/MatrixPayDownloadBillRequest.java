@@ -11,10 +11,8 @@ import java.util.Arrays;
 /**
  * <pre>
  *   微信支付下载对账单请求参数类
- * Created by Binary Wang on 2017-01-11.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -24,6 +22,7 @@ import java.util.Arrays;
 public class MatrixPayDownloadBillRequest extends MatrixBasePayRequest {
     private static final String[] BILL_TYPES = new String[]{BillType.ALL, BillType.SUCCESS, BillType.REFUND, BillType.RECHARGE_REFUND};
     private static final String TAR_TYPE_GZIP = "GZIP";
+    private static final long serialVersionUID = 3931398074805609677L;
 
     /**
      * <pre>
@@ -44,12 +43,17 @@ public class MatrixPayDownloadBillRequest extends MatrixBasePayRequest {
      * 是
      * ALL
      * String(8)
+     * 微信可传值
      * --ALL，返回当日所有订单信息，默认值
      * --SUCCESS，返回当日成功支付的订单
      * --REFUND，返回当日退款订单
+     * 支付宝可传值
+     * --trade：商户基于支付宝交易收单的业务账单；
+     * --signcustomer：基于商户支付宝余额收入及支出等资金变动的账务账单。
      * </pre>
      */
     private String billType;
+
 
     /**
      * <pre>

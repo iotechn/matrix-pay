@@ -8,7 +8,6 @@ import com.dobbinsoft.fw.pay.model.coupon.*;
 import com.dobbinsoft.fw.pay.model.notify.MatrixPayOrderNotifyCoupon;
 import com.dobbinsoft.fw.pay.model.notify.MatrixPayOrderNotifyResult;
 import com.dobbinsoft.fw.pay.model.notify.MatrixPayRefundNotifyResult;
-import com.dobbinsoft.fw.pay.model.notify.MatrixScanPayNotifyResult;
 import com.dobbinsoft.fw.pay.model.request.*;
 import com.dobbinsoft.fw.pay.model.result.*;
 import com.dobbinsoft.fw.pay.util.MatrixBeanUtils;
@@ -16,7 +15,6 @@ import com.github.binarywang.wxpay.bean.WxPayApiData;
 import com.github.binarywang.wxpay.bean.coupon.*;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
-import com.github.binarywang.wxpay.bean.notify.WxScanPayNotifyResult;
 import com.github.binarywang.wxpay.bean.request.*;
 import com.github.binarywang.wxpay.bean.result.*;
 import com.github.binarywang.wxpay.config.WxPayConfig;
@@ -29,7 +27,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,10 +54,11 @@ public class WxPayServiceImpl implements MatrixPayService {
             @Override
             public WxPayConfig getConfig() {
                 WxPayConfig wxPayConfig = new WxPayConfig();
+                wxPayConfig.setAppId(payProperties.getWxAppId());
                 wxPayConfig.setMchId(payProperties.getWxMchId());
                 wxPayConfig.setMchKey(payProperties.getWxMchKey());
                 wxPayConfig.setNotifyUrl(payProperties.getWxNotifyUrl());
-                wxPayConfig.setKeyPath(payProperties.getWxKeyPath());
+                wxPayConfig.setKeyContent(payProperties.getWxCert());
                 return wxPayConfig;
             }
         };
@@ -72,6 +70,7 @@ public class WxPayServiceImpl implements MatrixPayService {
     public Object createOrder(MatrixPayUnifiedOrderRequest entity) throws MatrixPayException {
         WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest = new WxPayUnifiedOrderRequest();
         MatrixBeanUtils.copyWxProperties(entity, wxPayUnifiedOrderRequest);
+        wxPayUnifiedOrderRequest.setTradeType(this.getTradeType(entity.getPayPlatform()));
         if (!CollectionUtils.isEmpty(entity.getDetail())) {
             List<MatrixPayRequestGoodsDetail> detailList = coverToWxGoodsDetail(entity.getDetail());
             wxPayUnifiedOrderRequest.setDetail(WxGsonBuilder.create().toJson(detailList));
@@ -161,6 +160,26 @@ public class WxPayServiceImpl implements MatrixPayService {
         return result;
     }
 
+    /**
+     * 获取支付方式
+     * @param payPlatformType
+     * @return
+     */
+    private String getTradeType(PayPlatformType payPlatformType) {
+        switch (payPlatformType) {
+            case WAP:
+            case MP:
+                return "JSAPI";
+            case APP:
+                return "APP";
+            case WEB:
+                return "NATIVE";
+            case MICRO:
+                return "MICROPAY";
+        }
+        return null;
+    }
+
     @Override
     public MatrixPayOrderCloseResult closeOrder(MatrixPayOrderCloseRequest request) throws MatrixPayException {
         WxPayOrderCloseRequest wxPayOrderCloseRequest = new WxPayOrderCloseRequest();
@@ -232,41 +251,15 @@ public class WxPayServiceImpl implements MatrixPayService {
     }
 
     @Override
-    public MatrixPayOrderNotifyResult parseOrderNotifyResult(String xmlData) throws MatrixPayException {
-        WxPayOrderNotifyResult wxPayOrderNotifyResult = null;
-        try {
-            wxPayOrderNotifyResult = wxPayService.parseOrderNotifyResult(xmlData);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-        MatrixPayOrderNotifyResult result = new MatrixPayOrderNotifyResult();
-        MatrixBeanUtils.copyWxProperties(wxPayOrderNotifyResult, result);
-        return result;
-    }
-
-    @Override
-    public MatrixPayRefundNotifyResult parseRefundNotifyResult(String xmlData) throws MatrixPayException {
+    public MatrixPayRefundNotifyResult checkParseRefundNotifyResult(Object xmlData) throws MatrixPayException {
         WxPayRefundNotifyResult wxPayRefundNotifyResult = null;
         try {
-            wxPayRefundNotifyResult = wxPayService.parseRefundNotifyResult(xmlData);
+            wxPayRefundNotifyResult = wxPayService.parseRefundNotifyResult((String) xmlData);
         } catch (WxPayException e) {
             throw new MatrixPayException(e);
         }
         MatrixPayRefundNotifyResult result = new MatrixPayRefundNotifyResult();
         MatrixBeanUtils.copyWxProperties(wxPayRefundNotifyResult, result);
-        return result;
-    }
-
-    @Override
-    public MatrixScanPayNotifyResult parseScanPayNotifyResult(String xmlData) throws MatrixPayException {
-        WxScanPayNotifyResult wxScanPayNotifyResult = null;
-        try {
-            wxScanPayNotifyResult = wxPayService.parseScanPayNotifyResult(xmlData);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-        MatrixScanPayNotifyResult result = new MatrixScanPayNotifyResult();
-        MatrixBeanUtils.copyWxProperties(wxScanPayNotifyResult, result);
         return result;
     }
 
@@ -283,17 +276,6 @@ public class WxPayServiceImpl implements MatrixPayService {
         MatrixPaySendRedpackResult result = new MatrixPaySendRedpackResult();
         MatrixBeanUtils.copyWxProperties(wxPaySendRedpackResult, request);
         return result;
-    }
-
-    @Override
-    public MatrixPayRedpackQueryResult queryRedpack(String mchBillNo) throws MatrixPayException {
-        WxPayRedpackQueryResult wxPayRedpackQueryResult = null;
-        try {
-            wxPayRedpackQueryResult = wxPayService.queryRedpack(mchBillNo);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-        return buildPayRedpackQueryResult(wxPayRedpackQueryResult);
     }
 
     @Override
@@ -322,35 +304,11 @@ public class WxPayServiceImpl implements MatrixPayService {
     }
 
     @Override
-    public byte[] createScanPayQrcodeMode1(String productId, File logoFile, Integer sideLength) {
-        return wxPayService.createScanPayQrcodeMode1(productId, logoFile, sideLength);
-    }
-
-    @Override
-    public String createScanPayQrcodeMode1(String productId) {
-        return wxPayService.createScanPayQrcodeMode1(productId);
-    }
-
-    @Override
-    public byte[] createScanPayQrcodeMode2(String codeUrl, File logoFile, Integer sideLength) {
-        return wxPayService.createScanPayQrcodeMode2(codeUrl, logoFile, sideLength);
-    }
-
-    @Override
     public void report(MatrixPayReportRequest request) throws MatrixPayException {
         WxPayReportRequest wxPayReportRequest = new WxPayReportRequest();
         MatrixBeanUtils.copyWxProperties(request, wxPayReportRequest);
         try {
             wxPayService.report(wxPayReportRequest);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-    }
-
-    @Override
-    public String downloadRawBill(String billDate, String billType, String tarType, String deviceInfo) throws MatrixPayException {
-        try {
-            return wxPayService.downloadRawBill(billDate, billType, tarType, deviceInfo);
         } catch (WxPayException e) {
             throw new MatrixPayException(e);
         }
@@ -368,19 +326,6 @@ public class WxPayServiceImpl implements MatrixPayService {
     }
 
     @Override
-    public MatrixPayBillResult downloadBill(String billDate, String billType, String tarType, String deviceInfo) throws MatrixPayException {
-        WxPayBillResult wxPayBillResult = null;
-        try {
-            wxPayBillResult = wxPayService.downloadBill(billDate, billType, tarType, deviceInfo);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-        MatrixPayBillResult result = new MatrixPayBillResult();
-        MatrixBeanUtils.copyWxProperties(wxPayBillResult, result);
-        return result;
-    }
-
-    @Override
     public MatrixPayBillResult downloadBill(MatrixPayDownloadBillRequest request) throws MatrixPayException {
         WxPayDownloadBillRequest wxPayDownloadBillRequest = new WxPayDownloadBillRequest();
         MatrixBeanUtils.copyWxProperties(request, wxPayDownloadBillRequest);
@@ -392,19 +337,6 @@ public class WxPayServiceImpl implements MatrixPayService {
         }
         MatrixPayBillResult result = new MatrixPayBillResult();
         MatrixBeanUtils.copyWxProperties(wxPayBillResult, request);
-        return result;
-    }
-
-    @Override
-    public MatrixPayFundFlowResult downloadFundFlow(String billDate, String accountType, String tarType) throws MatrixPayException {
-        WxPayFundFlowResult wxPayFundFlowResult = null;
-        try {
-            wxPayFundFlowResult = wxPayService.downloadFundFlow(billDate, accountType, tarType);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-        MatrixPayFundFlowResult result = new MatrixPayFundFlowResult();
-        MatrixBeanUtils.copyWxProperties(wxPayFundFlowResult, result);
         return result;
     }
 
@@ -469,28 +401,10 @@ public class WxPayServiceImpl implements MatrixPayService {
     }
 
     @Override
-    public String shorturl(String longUrl) throws MatrixPayException {
-        try {
-            return wxPayService.shorturl(longUrl);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-    }
-
-    @Override
     public String authcode2Openid(MatrixPayAuthcode2OpenidRequest request) throws MatrixPayException {
         WxPayAuthcode2OpenidRequest wxPayAuthcode2OpenidRequest = new WxPayAuthcode2OpenidRequest();
         try {
             return wxPayService.authcode2Openid(wxPayAuthcode2OpenidRequest);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-    }
-
-    @Override
-    public String authcode2Openid(String authCode) throws MatrixPayException {
-        try {
-            return wxPayService.authcode2Openid(authCode);
         } catch (WxPayException e) {
             throw new MatrixPayException(e);
         }
@@ -550,19 +464,6 @@ public class WxPayServiceImpl implements MatrixPayService {
         return result;
     }
 
-    @Override
-    public WxPayApiData getWxApiData() {
-        return wxPayService.getWxApiData();
-    }
-
-    @Override
-    public String queryComment(Date beginDate, Date endDate, Integer offset, Integer limit) throws MatrixPayException {
-        try {
-            return wxPayService.queryComment(beginDate, endDate, offset, limit);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-    }
 
     @Override
     public String queryComment(MatrixPayQueryCommentRequest request) throws MatrixPayException {
@@ -576,7 +477,7 @@ public class WxPayServiceImpl implements MatrixPayService {
     }
 
     @Override
-    public MatrixPayOrderNotifyResult checkSign(Object request) throws MatrixPayException {
+    public MatrixPayOrderNotifyResult checkParsePayResult(Object request) throws MatrixPayException {
         String body = (String) request;
         WxPayOrderNotifyResult wxPayOrderNotifyResult = null;
         try {

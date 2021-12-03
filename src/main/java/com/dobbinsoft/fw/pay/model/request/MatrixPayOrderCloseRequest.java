@@ -14,6 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 public class MatrixPayOrderCloseRequest extends MatrixBasePayRequest {
 
+    private static final long serialVersionUID = 3972651542466483360L;
     /**
      * <pre>
      * 商户订单号

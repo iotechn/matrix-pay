@@ -6,10 +6,8 @@ import lombok.NoArgsConstructor;
 
 /**
  * <pre>
- *  Created by BinaryWang on 2017/6/18.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

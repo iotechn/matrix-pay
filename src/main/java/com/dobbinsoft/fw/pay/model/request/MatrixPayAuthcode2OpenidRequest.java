@@ -5,10 +5,8 @@ import lombok.*;
 /**
  * <pre>
  * 授权码查询openid接口请求对象类
- * Created by Binary Wang on 2017-3-27.
  * </pre>
  *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -17,6 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 public class MatrixPayAuthcode2OpenidRequest extends MatrixBasePayRequest {
 
+    private static final long serialVersionUID = 4128065899247330943L;
     /**
      * <pre>
      *     授权码
