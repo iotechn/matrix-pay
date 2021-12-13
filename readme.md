@@ -18,9 +18,9 @@ MatrixPay(目标): 使用一套文档，一套API同时对接三家支付平台�
 
 ##### 3.1. 下载代码
 
-您可以在国内开源社区Gitee下载（推荐）：
+您可以在国内开源社区Gitee下载（推荐）：https://gitee.com/iotechn/matrix-pay
 
-您可以在国际开源社区Github下载：
+您可以在国际开源社区Github下载：https://github.com/iotechn/matrix-pay
 
 分支约定
 

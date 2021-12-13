@@ -22,11 +22,6 @@ public abstract class MatrixBasePayResult implements Serializable {
     private PayChannelType payChannel;
 
     /**
-     * 支付平台
-     */
-    private PayPlatformType payPlatform;
-
-    /**
      * 返回状态码.
      */
     protected String returnCode;

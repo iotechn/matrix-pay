@@ -141,22 +141,6 @@ public class WxPayServiceImpl implements MatrixPayService {
             result.setCoupons(list);
         }
         result.setPayChannel(PayChannelType.WX);
-        String tradeType = wxPayOrderQueryResult.getTradeType();
-        // JSAPI，NATIVE，APP，MICROPAY，详细说明见参数规定
-        switch (tradeType) {
-            case "JSAPI":
-                result.setPayPlatform(PayPlatformType.MP);
-                break;
-            case "NATIVE":
-                result.setPayPlatform(PayPlatformType.WEB);
-                break;
-            case "APP":
-                result.setPayPlatform(PayPlatformType.APP);
-                break;
-            case "MICROPAY":
-                result.setPayPlatform(PayPlatformType.MICRO);
-                break;
-        }
         return result;
     }
 
