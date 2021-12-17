@@ -214,6 +214,8 @@ public class AliPayServiceImpl implements MatrixPayService {
                             .optional("trade_no", entity.getTransactionId())
                             .optional("out_request_no", entity.getOutRefundNo())
                             .refund(entity.getOutTradeNo() == null ? "" : entity.getOutTradeNo(), fenToYuan(entity.getRefundFee()));
+            String code = response.getCode();
+            // 是否成功判斷
             MatrixPayRefundResult result = new MatrixPayRefundResult();
             result.setAppid(entity.getAppid());
             result.setPayChannel(entity.getPayChannel());
@@ -251,16 +253,6 @@ public class AliPayServiceImpl implements MatrixPayService {
             throw new MatrixPayException(e.getMessage());
         }
         return null;
-    }
-
-    @Override
-    public MatrixPaySendRedpackResult sendRedpack(MatrixPaySendRedpackRequest request) throws MatrixPayException {
-        throw new MatrixPayException("AliPay不支持红包");
-    }
-
-    @Override
-    public MatrixPayRedpackQueryResult queryRedpack(MatrixPayRedpackQueryRequest request) throws MatrixPayException {
-        throw new MatrixPayException("AliPay不支持红包");
     }
 
     @Override

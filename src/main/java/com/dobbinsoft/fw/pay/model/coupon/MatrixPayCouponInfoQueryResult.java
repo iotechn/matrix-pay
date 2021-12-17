@@ -1,6 +1,6 @@
 package com.dobbinsoft.fw.pay.model.coupon;
 
-import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
+import com.dobbinsoft.fw.pay.model.result.MatrixBasePayResult;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class MatrixPayCouponInfoQueryResult extends BaseWxPayResult {
+public class MatrixPayCouponInfoQueryResult extends MatrixBasePayResult {
     /**
      * <pre>
      * 字段名：设备号.

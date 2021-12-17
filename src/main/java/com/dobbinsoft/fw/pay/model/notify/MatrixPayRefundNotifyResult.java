@@ -1,22 +1,13 @@
 package com.dobbinsoft.fw.pay.model.notify;
 
-import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
-import com.github.binarywang.wxpay.constant.WxPayConstants;
-import com.github.binarywang.wxpay.exception.WxPayException;
-import com.thoughtworks.xstream.XStream;
+import com.dobbinsoft.fw.pay.model.result.MatrixBasePayResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import me.chanjar.weixin.common.util.json.WxGsonBuilder;
-import me.chanjar.weixin.common.util.xml.XStreamInitializer;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 
 /**
  * <pre>
@@ -28,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class MatrixPayRefundNotifyResult extends BaseWxPayResult implements Serializable {
+public class MatrixPayRefundNotifyResult extends MatrixBasePayResult implements Serializable {
     private static final long serialVersionUID = 4651725860079259186L;
 
 

@@ -1,6 +1,6 @@
 package com.dobbinsoft.fw.pay.model.entpay;
 
-import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
+import com.dobbinsoft.fw.pay.model.result.MatrixBasePayResult;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class MatrixEntPayQueryResult extends BaseWxPayResult {
+public class MatrixEntPayQueryResult extends MatrixBasePayResult {
   private static final long serialVersionUID = 3948485732447456947L;
 
   /**

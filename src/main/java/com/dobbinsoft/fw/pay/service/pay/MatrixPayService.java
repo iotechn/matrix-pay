@@ -129,37 +129,6 @@ public interface MatrixPayService {
     MatrixPayRefundQueryResult refundQuery(MatrixPayRefundQueryRequest request) throws MatrixPayException;
 
     /**
-     * 发送微信红包给个人用户.
-     * <pre>
-     * 文档详见:
-     * 发送普通红包 https://pay.weixin.qq.com/wiki/doc/api/tools/cash_coupon.php?chapter=13_4&index=3
-     *  接口地址：https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack
-     * 发送裂变红包 https://pay.weixin.qq.com/wiki/doc/api/tools/cash_coupon.php?chapter=13_5&index=4
-     *  接口地址：https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack
-     * </pre>
-     *
-     * @param request 请求对象
-     * @return the wx pay send redpack result
-     * @throws MatrixPayException the wx pay exception
-     */
-    MatrixPaySendRedpackResult sendRedpack(MatrixPaySendRedpackRequest request) throws MatrixPayException;
-
-    /**
-     * <pre>
-     *   查询红包记录.
-     *   用于商户对已发放的红包进行查询红包的具体信息，可支持普通红包和裂变包。
-     *   请求Url：https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo
-     *   是否需要证书：是（证书及使用说明详见商户证书）
-     *   请求方式：POST
-     * </pre>
-     *
-     * @param request 红包查询请求
-     * @return the wx pay redpack query result
-     * @throws MatrixPayException the wx pay exception
-     */
-    MatrixPayRedpackQueryResult queryRedpack(MatrixPayRedpackQueryRequest request) throws MatrixPayException;
-
-    /**
      * <pre>
      * 交易保障.
      * 应用场景：

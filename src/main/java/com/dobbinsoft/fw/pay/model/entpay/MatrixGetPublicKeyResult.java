@@ -1,6 +1,6 @@
 package com.dobbinsoft.fw.pay.model.entpay;
 
-import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
+import com.dobbinsoft.fw.pay.model.result.MatrixBasePayResult;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class MatrixGetPublicKeyResult extends BaseWxPayResult {
+public class MatrixGetPublicKeyResult extends MatrixBasePayResult {
   /**
    * 商户号.
    */

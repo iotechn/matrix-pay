@@ -247,27 +247,6 @@ public class WxPayServiceImpl implements MatrixPayService {
         return result;
     }
 
-    @Override
-    public MatrixPaySendRedpackResult sendRedpack(MatrixPaySendRedpackRequest request) throws MatrixPayException {
-        WxPaySendRedpackRequest wxPaySendRedpackRequest = new WxPaySendRedpackRequest();
-        MatrixBeanUtils.copyWxProperties(request, wxPaySendRedpackRequest);
-        WxPaySendRedpackResult wxPaySendRedpackResult = null;
-        try {
-            wxPaySendRedpackResult = wxPayService.sendRedpack(wxPaySendRedpackRequest);
-        } catch (WxPayException e) {
-            throw new MatrixPayException(e);
-        }
-        MatrixPaySendRedpackResult result = new MatrixPaySendRedpackResult();
-        MatrixBeanUtils.copyWxProperties(wxPaySendRedpackResult, request);
-        return result;
-    }
-
-    @Override
-    public MatrixPayRedpackQueryResult queryRedpack(MatrixPayRedpackQueryRequest request) throws MatrixPayException {
-
-        return null;
-    }
-
     /**
      * 创建红包查询结果
      * @param wxPayRedpackQueryResult

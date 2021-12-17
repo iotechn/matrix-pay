@@ -130,16 +130,6 @@ public class MatrixPayServiceImpl implements MatrixPayService {
     }
 
     @Override
-    public MatrixPaySendRedpackResult sendRedpack(MatrixPaySendRedpackRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public MatrixPayRedpackQueryResult queryRedpack(MatrixPayRedpackQueryRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
     public void report(MatrixPayReportRequest request) throws MatrixPayException {
 
     }
