@@ -368,7 +368,7 @@ public class AliPayServiceImpl implements MatrixPayService {
             result.setOpenid(map.get("buyer_id"));
             result.setTotalFee(yuanToFen(map.get("invoice_amount")));
             result.setOutTradeNo(map.get("out_trade_no"));
-            result.setAppid("app_id");
+            result.setAppid(map.get("app_id"));
             result.setTransactionId(map.get("trade_no"));
             result.setVersion(map.get("version"));
             result.setAttach(map.get("body"));

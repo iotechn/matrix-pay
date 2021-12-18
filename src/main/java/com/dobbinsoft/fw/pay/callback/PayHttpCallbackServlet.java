@@ -29,10 +29,7 @@ public class PayHttpCallbackServlet extends HttpServlet {
         String requestURI = req.getRequestURI();
         MatrixPayCallbackHandler matrixPayCallbackHandler = this.payHandlerMap.get(requestURI);
         matrixPayCallbackHandler.beforeCheckSign(req);
-        // ？？？ 如何在checkSign之前，确定租户信息。QueryParam ???
-        // 思路： 将回调URL上，做上租户信息，通过url获取即可。
         MatrixPayOrderNotifyResult payOrderNotifyResult = this.matrixPayService.checkParsePayResult(req);
-        // 问题： 现在的URL为路由到不同处理器的KEY，如何解决通配符问题，或者换个思路
         Object res = matrixPayCallbackHandler.handle(payOrderNotifyResult, req);
         PrintWriter writer = null;
         try {
