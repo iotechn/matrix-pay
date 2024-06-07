@@ -53,7 +53,13 @@ public abstract class MatrixBasePayRequest implements Serializable {
      * 示例值：1230000109
      * 描述：微信支付分配的商户号
      * </pre>
+     * -- SETTER --
+     *  如果配置中已经设置，可以不设置值.
+     *
+     * @param mchId 微信商户号
+
      */
+    @Setter
     private String mchId;
     /**
      * <pre>
@@ -122,23 +128,5 @@ public abstract class MatrixBasePayRequest implements Serializable {
         return new BigDecimal(yuan).setScale(2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).intValue();
     }
 
-
-    /**
-     * 如果配置中已经设置，可以不设置值.
-     *
-     * @param mchId 微信商户号
-     */
-    public void setMchId(String mchId) {
-        this.mchId = mchId;
-    }
-
-    /**
-     * 默认采用时间戳为随机字符串，可以不设置.
-     *
-     * @param nonceStr 随机字符串
-     */
-    public void setNonceStr(String nonceStr) {
-        this.nonceStr = nonceStr;
-    }
 
 }

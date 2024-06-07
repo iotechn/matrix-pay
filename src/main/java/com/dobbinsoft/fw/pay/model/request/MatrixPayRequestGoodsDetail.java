@@ -1,5 +1,6 @@
 package com.dobbinsoft.fw.pay.model.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,21 +12,25 @@ public class MatrixPayRequestGoodsDetail implements Serializable {
     /**
      * 必填 32 商品的编号
      */
+    @JsonProperty("goods_id")
     private String goodsId;
 
     /**
      * 可选 32 支付定义的统一商品编号
      */
+    @JsonProperty("pay_goods_id")
     private String payGoodsId;
 
     /**
      * 必填 256 商品名称
      */
+    @JsonProperty("goods_name")
     private String goodsName;
 
     /**
      * 必填 商品数量
      */
+    @JsonProperty("goods_num")
     private String goodsNum;
 
     /**
@@ -36,6 +41,7 @@ public class MatrixPayRequestGoodsDetail implements Serializable {
     /**
      * 可选 32 商品类目
      */
+    @JsonProperty("goods_category")
     private String goodsCategory;
 
     /**

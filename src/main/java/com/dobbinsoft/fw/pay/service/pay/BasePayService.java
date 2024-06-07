@@ -11,10 +11,10 @@ import com.dobbinsoft.fw.pay.config.PayProperties;
  */
 public abstract class BasePayService {
 
-    protected PayProperties propertiesHolder;
+    protected PayProperties payProperties;
 
-    public BasePayService(PayProperties propertiesHolder) {
-        this.propertiesHolder = propertiesHolder;
+    public BasePayService(PayProperties payProperties) {
+        this.payProperties = payProperties;
     }
 
 }
