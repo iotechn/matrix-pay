@@ -3,7 +3,7 @@ package com.dobbinsoft.fw.pay.model.request;
 import com.dobbinsoft.fw.pay.enums.PayChannelType;
 import com.dobbinsoft.fw.pay.enums.PayPlatformType;
 import lombok.Data;
-import me.chanjar.weixin.common.util.json.WxGsonBuilder;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -36,7 +36,13 @@ public abstract class MatrixBasePayRequest implements Serializable {
      * 示例值：wxd678efh567hg6787
      * 描述：微信分配的公众账号ID（企业号corpid即为此appId）
      * </pre>
+     * -- SETTER --
+     *  如果配置中已经设置，可以不设置值.
+     *
+     * @param appid 微信公众号appid
+
      */
+    @Setter
     private String appid;
     /**
      * <pre>
@@ -120,15 +126,6 @@ public abstract class MatrixBasePayRequest implements Serializable {
     /**
      * 如果配置中已经设置，可以不设置值.
      *
-     * @param appid 微信公众号appid
-     */
-    public void setAppid(String appid) {
-        this.appid = appid;
-    }
-
-    /**
-     * 如果配置中已经设置，可以不设置值.
-     *
      * @param mchId 微信商户号
      */
     public void setMchId(String mchId) {
@@ -142,11 +139,6 @@ public abstract class MatrixBasePayRequest implements Serializable {
      */
     public void setNonceStr(String nonceStr) {
         this.nonceStr = nonceStr;
-    }
-
-    @Override
-    public String toString() {
-        return WxGsonBuilder.create().toJson(this);
     }
 
 }

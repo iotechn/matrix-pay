@@ -2,14 +2,12 @@ package com.dobbinsoft.fw.pay.handler;
 
 import com.dobbinsoft.fw.pay.model.notify.MatrixPayOrderNotifyResult;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * ClassName: MatrixPayCallbackHandler
  * Description: 普通支付，成功通知
  *
- * @author: e-weichaozheng
- * @date: 2021-04-22
  */
 public interface MatrixPayCallbackHandler {
 

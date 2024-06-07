@@ -1,12 +1,9 @@
 package com.dobbinsoft.fw.pay.model.notify;
 
 import com.dobbinsoft.fw.pay.model.result.MatrixBasePayResult;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 /**
  * 支付结果通用通知 ，文档见：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_7
@@ -171,7 +168,6 @@ public class MatrixPayOrderNotifyResult extends MatrixBasePayResult {
      * 描述：货币类型，符合ISO4217标准的三位字母代码，默认人民币：CNY，其他值列表详见货币类型
      * </pre>
      */
-    @XStreamAlias("cash_fee_type")
     private String cashFeeType;
     /**
      * <pre>
@@ -196,8 +192,6 @@ public class MatrixPayOrderNotifyResult extends MatrixBasePayResult {
      * </pre>
      */
     private Integer couponCount;
-
-    private List<MatrixPayOrderNotifyCoupon> couponList;
 
     /**
      * <pre>

@@ -3,8 +3,10 @@ package com.dobbinsoft.fw.pay.model.request;
 import com.dobbinsoft.fw.pay.anntation.MatrixIgnoreCopy;
 import com.dobbinsoft.fw.pay.anntation.MatrixNotNull;
 import com.dobbinsoft.fw.pay.enums.PayChannelType;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.*;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -19,8 +21,10 @@ import java.util.List;
 @Builder(builderMethodName = "newBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
+@JacksonXmlRootElement(localName = "xml")
 public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
 
+    @Serial
     private static final long serialVersionUID = -3173551488619526785L;
     /**
      * <pre>
@@ -297,14 +301,5 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      * </pre>
      */
     private String returnUrl;
-
-    /**
-     * 如果配置中已经设置，可以不设置值.
-     *
-     * @param notifyUrl 支付回调通知地址
-     */
-    public void setNotifyUrl(String notifyUrl) {
-        this.notifyUrl = notifyUrl;
-    }
 
 }

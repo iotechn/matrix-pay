@@ -6,42 +6,33 @@ import com.dobbinsoft.fw.pay.enums.PayChannelType;
 import com.dobbinsoft.fw.pay.exception.MatrixPayException;
 import com.dobbinsoft.fw.pay.model.context.PayCallbackContext;
 import com.dobbinsoft.fw.pay.model.context.PayCallbackContextHolder;
-import com.dobbinsoft.fw.pay.model.coupon.*;
 import com.dobbinsoft.fw.pay.model.notify.MatrixPayOrderNotifyResult;
-import com.dobbinsoft.fw.pay.model.notify.MatrixPayRefundNotifyResult;
-import com.dobbinsoft.fw.pay.model.request.*;
-import com.dobbinsoft.fw.pay.model.result.*;
-import com.github.binarywang.wxpay.bean.WxPayApiData;
-import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.dobbinsoft.fw.pay.model.request.MatrixBasePayRequest;
+import com.dobbinsoft.fw.pay.model.request.MatrixPayRefundRequest;
+import com.dobbinsoft.fw.pay.model.request.MatrixPayUnifiedOrderRequest;
+import com.dobbinsoft.fw.pay.model.result.MatrixPayRefundResult;
+import com.dobbinsoft.fw.support.utils.JacksonUtil;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * ClassName: PayServiceImpl
  * Description: TODO
- *
- * @author: e-weichaozheng
- * @date: 2021-04-20
  */
+@Slf4j
 public class MatrixPayServiceImpl implements MatrixPayService {
 
     private AliPayServiceImpl aliPayService;
 
     private WxPayServiceImpl wxPayService;
-
-    private static final Logger logger = LoggerFactory.getLogger(MatrixPayMicropayResult.class);
 
     public MatrixPayServiceImpl(PayProperties payProperties) {
         this.aliPayService = new AliPayServiceImpl(payProperties);
@@ -60,45 +51,6 @@ public class MatrixPayServiceImpl implements MatrixPayService {
         }
     }
 
-    @Override
-    public void configWarmUp(List<PayProperties> list) {
-        // 仅支付宝需要预热
-        this.aliPayService.configWarmUp(list);
-    }
-
-    @Override
-    public MatrixEntPayService getEntPayService() {
-        return null;
-    }
-
-    @Override
-    public void setEntPayService(MatrixEntPayService entPayService) {
-
-    }
-
-    @Override
-    public MatrixPayOrderQueryResult queryOrder(MatrixPayOrderQueryRequest request) throws MatrixPayException {
-        this.checkParam(request);
-        if (request.getPayChannel() == PayChannelType.ALI) {
-            return this.aliPayService.queryOrder(request);
-        } else if (request.getPayChannel() == PayChannelType.WX) {
-            return this.wxPayService.queryOrder(request);
-        } else {
-            throw new MatrixPayException("支付渠道不支持");
-        }
-    }
-
-    @Override
-    public MatrixPayOrderCloseResult closeOrder(MatrixPayOrderCloseRequest request) throws MatrixPayException {
-        this.checkParam(request);
-        if (request.getPayChannel() == PayChannelType.ALI) {
-            return this.aliPayService.closeOrder(request);
-        } else if (request.getPayChannel() == PayChannelType.WX) {
-            return this.wxPayService.closeOrder(request);
-        } else {
-            throw new MatrixPayException("支付渠道不支持");
-        }
-    }
 
     @Override
     public MatrixPayRefundResult refund(MatrixPayRefundRequest request) throws MatrixPayException {
@@ -110,94 +62,6 @@ public class MatrixPayServiceImpl implements MatrixPayService {
         } else {
             throw new MatrixPayException("支付渠道不支持");
         }
-    }
-
-    @Override
-    public MatrixPayRefundQueryResult refundQuery(MatrixPayRefundQueryRequest request) throws MatrixPayException {
-        this.checkParam(request);
-        if (request.getPayChannel() == PayChannelType.ALI) {
-            return this.aliPayService.refundQuery(request);
-        } else if (request.getPayChannel() == PayChannelType.WX) {
-            return this.wxPayService.refundQuery(request);
-        } else {
-            throw new MatrixPayException("支付渠道不支持");
-        }
-    }
-
-    @Override
-    public MatrixPayRefundNotifyResult checkParseRefundNotifyResult(Object obj) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public void report(MatrixPayReportRequest request) throws MatrixPayException {
-
-    }
-
-    @Override
-    public String downloadRawBill(MatrixPayDownloadBillRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public MatrixPayBillResult downloadBill(MatrixPayDownloadBillRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public MatrixPayFundFlowResult downloadFundFlow(MatrixPayDownloadFundFlowRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public MatrixPayMicropayResult micropay(MatrixPayMicropayRequest request) throws MatrixPayException {
-        if (request.getPayChannel() == PayChannelType.ALI) {
-            return this.aliPayService.micropay(request);
-        } else if (request.getPayChannel() == PayChannelType.WX) {
-            return this.wxPayService.micropay(request);
-        } else {
-            throw new MatrixPayException("支付渠道不支持");
-        }
-    }
-
-    @Override
-    public MatrixPayOrderReverseResult reverseOrder(MatrixPayOrderReverseRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public String shorturl(MatrixPayShorturlRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public String authcode2Openid(MatrixPayAuthcode2OpenidRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public String getSandboxSignKey() throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public MatrixPayCouponSendResult sendCoupon(MatrixPayCouponSendRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public MatrixPayCouponStockQueryResult queryCouponStock(MatrixPayCouponStockQueryRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public MatrixPayCouponInfoQueryResult queryCouponInfo(MatrixPayCouponInfoQueryRequest request) throws MatrixPayException {
-        return null;
-    }
-
-    @Override
-    public String queryComment(MatrixPayQueryCommentRequest request) throws MatrixPayException {
-        return null;
     }
 
     @Override
@@ -213,7 +77,7 @@ public class MatrixPayServiceImpl implements MatrixPayService {
             PayCallbackContext payCallbackContext = new PayCallbackContext();
             payCallbackContext.setPayChannelType(PayChannelType.ALI);
             PayCallbackContextHolder.set(payCallbackContext);
-            logger.info("[支付宝] 统一支付回调原始报文：" + new Gson().toJson(map));
+            log.info("[支付宝] 统一支付回调原始报文：" + JacksonUtil.toJSONString(map));
             result = aliPayService.checkParsePayResult(map);
             PayCallbackContextHolder.setPayId(result.getTransactionId());
             result.setPayChannel(PayChannelType.ALI);
@@ -227,7 +91,7 @@ public class MatrixPayServiceImpl implements MatrixPayService {
                 PayCallbackContext payCallbackContext = new PayCallbackContext();
                 payCallbackContext.setPayChannelType(PayChannelType.WX);
                 PayCallbackContextHolder.set(payCallbackContext);
-                logger.info("[微信] 统一支付回调原始报文：" + str);
+                log.info("[微信] 统一支付回调原始报文：" + str);
                 result = wxPayService.checkParsePayResult(str);
                 PayCallbackContextHolder.setPayId(result.getTransactionId());
                 result.setPayChannel(PayChannelType.WX);
@@ -272,7 +136,7 @@ public class MatrixPayServiceImpl implements MatrixPayService {
                             if (res == null) {
                                 throw new MatrixPayException(matrixNotNull.msg().replace("{channel}", type.getMsg()));
                             }
-                        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
                         }
                     }
                 }

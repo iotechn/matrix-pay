@@ -1,13 +1,8 @@
 package com.dobbinsoft.fw.pay.model.request;
 
-import com.github.binarywang.wxpay.config.WxPayConfig;
-import com.github.binarywang.wxpay.constant.WxPayConstants.RefundAccountSource;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import lombok.*;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
+import java.io.Serial;
 
 /**
  * <pre>
@@ -21,8 +16,8 @@ import java.util.Arrays;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatrixPayRefundRequest extends MatrixBasePayRequest {
-    private static final String[] REFUND_ACCOUNT = new String[]{
-            RefundAccountSource.RECHARGE_FUNDS, RefundAccountSource.UNSETTLED_FUNDS};
+
+    @Serial
     private static final long serialVersionUID = -1999065466412312068L;
 
     /**

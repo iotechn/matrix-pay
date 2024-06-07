@@ -96,6 +96,4 @@ public class MatrixPayRefundResult extends MatrixBasePayResult implements Serial
      */
     private Integer couponRefundFee;
 
-    private List<MatrixPayRefundCouponInfo> refundCoupons;
-
 }

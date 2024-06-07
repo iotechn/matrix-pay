@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import me.chanjar.weixin.common.util.json.WxGsonBuilder;
 
 import java.io.Serializable;
 
@@ -42,11 +41,6 @@ public class MatrixPayRefundNotifyResult extends MatrixBasePayResult implements 
     @Data
     @NoArgsConstructor
     public static class ReqInfo {
-        @Override
-        public String toString() {
-            return WxGsonBuilder.create().toJson(this);
-        }
-
         /**
          * <pre>
          * 字段名：微信订单号.

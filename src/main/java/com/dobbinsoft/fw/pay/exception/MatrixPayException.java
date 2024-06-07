@@ -1,8 +1,6 @@
 package com.dobbinsoft.fw.pay.exception;
 
 import com.dobbinsoft.fw.pay.model.result.MatrixBasePayResult;
-import com.github.binarywang.wxpay.exception.WxPayException;
-import com.google.common.base.Joiner;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -60,14 +58,6 @@ public class MatrixPayException extends RuntimeException {
         this.customErrorMsg = customErrorMsg;
     }
 
-    public MatrixPayException(WxPayException e) {
-        returnCode = e.getReturnCode();
-        returnMsg = e.getReturnMsg();
-        resultCode = e.getResultCode();
-        errCode = e.getErrCode();
-        errCodeDes = e.getErrCodeDes();
-        xmlString = e.getXmlString();
-    }
 
     /**
      * Instantiates a new Wx pay exception.
@@ -211,14 +201,8 @@ public class MatrixPayException extends RuntimeException {
          * @return the string
          */
         public String buildErrorMsg() {
-            return Joiner.on("，").skipNulls().join(
-                    returnCode == null ? null : String.format("返回代码：[%s]", returnCode),
-                    returnMsg == null ? null : String.format("返回信息：[%s]", returnMsg),
-                    resultCode == null ? null : String.format("结果代码：[%s]", resultCode),
-                    errCode == null ? null : String.format("错误代码：[%s]", errCode),
-                    errCodeDes == null ? null : String.format("错误详情：[%s]", errCodeDes),
-                    xmlString == null ? null : "微信返回的原始报文：\n" + xmlString
-            );
+            return String.format("返回代码：[%s],返回信息：[%s],结果代码：[%s], 错误代码: [%s], 错误详情：[%s],原始报文: [%s]",
+                    returnCode, returnMsg, resultCode, errCode, errCodeDes, xmlString);
         }
     }
 }
