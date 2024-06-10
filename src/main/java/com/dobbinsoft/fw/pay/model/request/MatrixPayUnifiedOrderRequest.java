@@ -4,6 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.*;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -138,7 +139,7 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      * 描述：订单生成时间，格式为yyyyMMddHHmmss，如2009年12月25日9点10分10秒表示为20091225091010。其他详见时间规则
      * </pre>
      */
-    private String timeStart;
+    private LocalDateTime timeStart;
 
     /**
      * <pre>
@@ -151,7 +152,7 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      *   注意：最短失效时间间隔必须大于5分钟
      * </pre>
      */
-    private String timeExpire;
+    private LocalDateTime timeExpire;
 
     /**
      * <pre>

@@ -7,6 +7,8 @@ import com.dobbinsoft.fw.pay.model.request.MatrixPayRefundRequest;
 import com.dobbinsoft.fw.pay.model.request.MatrixPayUnifiedOrderRequest;
 import com.dobbinsoft.fw.pay.model.result.MatrixPayRefundResult;
 import com.dobbinsoft.fw.pay.service.pay.MatrixPayService;
+import com.dobbinsoft.fw.pay.service.pay.ali.model.AliPayUnifiedOrderNotify;
+import com.dobbinsoft.fw.pay.service.pay.wx.model.WxPayUnifiedOrderNotify;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.ParseException;
@@ -18,7 +20,7 @@ import java.util.Date;
  * Description: 支付宝支付实现
  */
 @Slf4j
-public class AliPayServiceImpl implements MatrixPayService {
+public class AliPayServiceImpl implements MatrixPayService<Object> {
 
     private PayProperties payProperties;
 

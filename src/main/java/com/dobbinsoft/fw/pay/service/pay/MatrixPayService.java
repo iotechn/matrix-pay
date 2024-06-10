@@ -13,7 +13,7 @@ import com.dobbinsoft.fw.pay.model.result.MatrixPayRefundResult;
  * </pre>
  *
  */
-public interface MatrixPayService {
+public interface MatrixPayService<O> {
 
     /**
      * 调用统一下单接口，并组装生成支付所需参数对象.
@@ -26,7 +26,7 @@ public interface MatrixPayService {
      * @return 返回 前端支付请求所需对象
      * @throws MatrixPayException the pay exception
      */
-    <T> T createOrder(MatrixPayUnifiedOrderRequest request) throws MatrixPayException;
+    O createOrder(MatrixPayUnifiedOrderRequest request) throws MatrixPayException;
 
 
     /**

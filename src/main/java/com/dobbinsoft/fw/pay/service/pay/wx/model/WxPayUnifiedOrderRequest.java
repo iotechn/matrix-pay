@@ -1,4 +1,4 @@
-package com.dobbinsoft.fw.pay.service.pay.wx;
+package com.dobbinsoft.fw.pay.service.pay.wx.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;

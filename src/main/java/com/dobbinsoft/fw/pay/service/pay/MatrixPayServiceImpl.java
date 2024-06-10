@@ -12,8 +12,12 @@ import com.dobbinsoft.fw.pay.model.request.MatrixPayRefundRequest;
 import com.dobbinsoft.fw.pay.model.request.MatrixPayUnifiedOrderRequest;
 import com.dobbinsoft.fw.pay.model.result.MatrixPayRefundResult;
 import com.dobbinsoft.fw.pay.service.pay.ali.AliPayServiceImpl;
+import com.dobbinsoft.fw.pay.service.pay.ali.model.AliPayUnifiedOrderNotify;
 import com.dobbinsoft.fw.pay.service.pay.wx.WxPayServiceImpl;
+import com.dobbinsoft.fw.pay.service.pay.wx.model.WxPayUnifiedOrderNotify;
 import com.dobbinsoft.fw.support.utils.JacksonUtil;
+import com.dobbinsoft.fw.support.utils.JacksonXmlUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +28,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * ClassName: PayServiceImpl
  * Description: TODO
  */
 @Slf4j
-public class MatrixPayServiceImpl implements MatrixPayService {
+public class MatrixPayServiceImpl implements MatrixPayService<Object> {
 
     private AliPayServiceImpl aliPayService;
 
@@ -80,32 +85,24 @@ public class MatrixPayServiceImpl implements MatrixPayService {
             payCallbackContext.setPayChannelType(PayChannelType.ALI);
             PayCallbackContextHolder.set(payCallbackContext);
             log.info("[支付宝] 统一支付回调原始报文：" + JacksonUtil.toJSONString(map));
-            result = aliPayService.checkParsePayResult(map);
+            AliPayUnifiedOrderNotify notify = new AliPayUnifiedOrderNotify();
+            result = aliPayService.checkParsePayResult(notify);
             PayCallbackContextHolder.setPayId(result.getTransactionId());
             result.setPayChannel(PayChannelType.ALI);
         } else {
-            ServletInputStream is = null;
-            try {
-                is = servletRequest.getInputStream();
+            try (ServletInputStream is = servletRequest.getInputStream()) {
                 byte[] bytes = new byte[servletRequest.getContentLength()];
                 is.read(bytes);
                 String str = new String(bytes);
                 PayCallbackContext payCallbackContext = new PayCallbackContext();
                 payCallbackContext.setPayChannelType(PayChannelType.WX);
                 PayCallbackContextHolder.set(payCallbackContext);
-                log.info("[微信] 统一支付回调原始报文：" + str);
+                log.info("[微信] 统一支付回调原始报文：\n{}",str);
                 result = wxPayService.checkParsePayResult(str);
                 PayCallbackContextHolder.setPayId(result.getTransactionId());
                 result.setPayChannel(PayChannelType.WX);
             } catch (IOException e) {
-                throw new MatrixPayException("支付回调，网络异常");
-            } finally {
-                if (is == null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                    }
-                }
+                throw new MatrixPayException("微信支付回调，网络异常: %s".formatted(e.getMessage()));
             }
         }
         return result;
