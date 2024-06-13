@@ -1,6 +1,7 @@
 package com.dobbinsoft.fw.pay.service.pay.wx;
 
 import com.dobbinsoft.fw.pay.config.PayProperties;
+import com.dobbinsoft.fw.pay.enums.PayPlatformType;
 import com.dobbinsoft.fw.pay.exception.MatrixPayException;
 import com.dobbinsoft.fw.pay.model.notify.MatrixPayOrderNotifyResult;
 import com.dobbinsoft.fw.pay.model.request.MatrixPayRefundRequest;
@@ -20,12 +21,11 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.*;
-import java.security.cert.CertificateException;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.io.FileInputStream;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * ClassName: WxPayServiceImpl
@@ -81,6 +81,12 @@ public class WxPayServiceImpl extends BasePayService implements MatrixPayService
     public WxPayUnifiedPrepayModel createOrder(MatrixPayUnifiedOrderRequest entity) throws MatrixPayException {
         WxPayUnifiedOrderRequest wxEntity = new WxPayUnifiedOrderRequest();
         BeanUtils.copyProperties(entity, wxEntity);
+        if (entity.getTimeStart() != null) {
+            wxEntity.setTimeStart(TimeUtils.localDateTimeToString(entity.getTimeStart(), "yyyyMMddHHmmss"));
+        }
+        if (entity.getTimeExpire() != null) {
+            wxEntity.setTimeExpire(TimeUtils.localDateTimeToString(entity.getTimeExpire(), "yyyyMMddHHmmss"));
+        }
         // 设置默认值
         if (StringUtils.isEmpty(wxEntity.getAppid())) {
             wxEntity.setAppid(payProperties.getWxAppId());
@@ -94,8 +100,14 @@ public class WxPayServiceImpl extends BasePayService implements MatrixPayService
         if (StringUtils.isEmpty(wxEntity.getNonceStr())) {
             wxEntity.setNonceStr(StringUtils.uuid());
         }
-        // TODO 路由类型
-        wxEntity.setTradeType("JSAPI");
+        // 路由类型
+        if (entity.getPayPlatform() == PayPlatformType.MP || entity.getPayPlatform() == PayPlatformType.WAP) {
+            wxEntity.setTradeType("JSAPI");
+        } else if (entity.getPayPlatform() == PayPlatformType.APP) {
+            wxEntity.setTradeType("APP");
+        } else {
+            wxEntity.setTradeType("NATIVE");
+        }
 
         wxEntity.setDetail(JacksonUtil.toJSONString(entity.getDetail()));
         // 签名
@@ -138,8 +150,7 @@ public class WxPayServiceImpl extends BasePayService implements MatrixPayService
             prepayModel.setPaySign(DigestUtils.md5Hex(sb.toString()).toUpperCase());
             return prepayModel;
         } catch (IOException e) {
-            // TODO matrix exception
-            throw new RuntimeException(e);
+            throw new MatrixPayException("[微信] 统一下单发生网络异常");
         }
 
     }
@@ -184,8 +195,7 @@ public class WxPayServiceImpl extends BasePayService implements MatrixPayService
             BeanUtils.copyProperties(wxPayRefundResponse, matrixPayRefundResult);
             return matrixPayRefundResult;
         } catch (IOException e) {
-            // TODO matrix exception
-            throw new RuntimeException(e);
+            throw new MatrixPayException("统一下单发生网络异常");
         }
     }
 

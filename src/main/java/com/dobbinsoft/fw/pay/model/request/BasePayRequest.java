@@ -70,39 +70,5 @@ public abstract class BasePayRequest implements Serializable {
      * </pre>
      */
     protected String subMchId;
-    /**
-     * <pre>
-     * 字段名：随机字符串.
-     * 变量名：nonce_str
-     * 是否必填：是
-     * 类型：String(32)
-     * 示例值：5K8264ILTKCH16CQ2502SI8ZNMTM67VS
-     * 描述：随机字符串，不长于32位。推荐随机数生成算法
-     * </pre>
-     */
-    protected String nonceStr;
-    /**
-     * <pre>
-     * 字段名：签名.
-     * 变量名：sign
-     * 是否必填：是
-     * 类型：String(32)
-     * 示例值：C380BEC2BFD727A4B6845133519F3AD6
-     * 描述：签名，详见签名生成算法
-     * </pre>
-     */
-    protected String sign;
-
-    /**
-     * <pre>
-     * 签名类型.
-     * sign_type
-     * 否
-     * String(32)
-     * HMAC-SHA256
-     * 签名类型，目前支持HMAC-SHA256和MD5
-     * </pre>
-     */
-    private String signType;
 
 }

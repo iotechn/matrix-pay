@@ -1,7 +1,7 @@
 package com.dobbinsoft.fw.pay.model.request;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
@@ -20,19 +20,7 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
 
     @Serial
     private static final long serialVersionUID = -3173551488619526785L;
-    /**
-     * <pre>
-     * 字段名：接口版本号.
-     * 变量名：version
-     * 是否必填：单品优惠必填
-     * 类型：String(32)
-     * 示例值：1.0
-     * 描述：单品优惠新增字段，接口版本号，区分原接口，默认填写1.0。
-     * 入参新增version后，则支付通知接口也将返回单品优惠信息字段promotion_detail，请确保支付通知的签名验证能通过。
-     * 更多信息，详见文档：https://pay.weixin.qq.com/wiki/doc/api/danpin.php?chapter=9_102&index=2
-     * </pre>
-     */
-    private String version;
+
 
     /**
      * <pre>
@@ -154,17 +142,6 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      */
     private LocalDateTime timeExpire;
 
-    /**
-     * <pre>
-     * 字段名：商品标记.
-     * 变量名：goods_tag
-     * 是否必填：否
-     * 类型：String(32)
-     * 示例值：WXG
-     * 描述：商品标记，代金券或立减优惠功能的参数，说明详见代金券或立减优惠
-     * </pre>
-     */
-    private String goodsTag;
 
     /**
      * <pre>
@@ -178,30 +155,6 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      */
     private String notifyUrl;
 
-    /**
-     * <pre>
-     * 字段名：交易类型.
-     * 变量名：trade_type
-     * 是否必填：是
-     * 类型：String(16)
-     * 示例值： JSAPI
-     * 描述： 取值如下：JSAPI，NATIVE，APP，详细说明见参数规定:
-     * JSAPI--公众号支付、NATIVE--原生扫码支付、APP--app支付，统一下单接口trade_type的传参可参考这里
-     * </pre>
-     */
-//    private String tradeType;
-
-    /**
-     * <pre>
-     * 字段名：商品Id.
-     * 变量名：product_id
-     * 是否必填：否
-     * 类型：String(32)
-     * 示例值：12235413214070356458058
-     * 描述：trade_type=NATIVE，此参数必传。此id为二维码中包含的商品Id，商户自行定义。
-     * </pre>
-     */
-    private String productId;
 
     /**
      * <pre>

@@ -12,12 +12,9 @@ import com.dobbinsoft.fw.pay.model.request.MatrixPayRefundRequest;
 import com.dobbinsoft.fw.pay.model.request.MatrixPayUnifiedOrderRequest;
 import com.dobbinsoft.fw.pay.model.result.MatrixPayRefundResult;
 import com.dobbinsoft.fw.pay.service.pay.ali.AliPayServiceImpl;
-import com.dobbinsoft.fw.pay.service.pay.ali.model.AliPayUnifiedOrderNotify;
+import com.dobbinsoft.fw.pay.service.pay.ali.model.AliPayUnifiedOrderRequest;
 import com.dobbinsoft.fw.pay.service.pay.wx.WxPayServiceImpl;
-import com.dobbinsoft.fw.pay.service.pay.wx.model.WxPayUnifiedOrderNotify;
 import com.dobbinsoft.fw.support.utils.JacksonUtil;
-import com.dobbinsoft.fw.support.utils.JacksonXmlUtil;
-import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +25,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * ClassName: PayServiceImpl
@@ -85,7 +81,7 @@ public class MatrixPayServiceImpl implements MatrixPayService<Object> {
             payCallbackContext.setPayChannelType(PayChannelType.ALI);
             PayCallbackContextHolder.set(payCallbackContext);
             log.info("[支付宝] 统一支付回调原始报文：" + JacksonUtil.toJSONString(map));
-            AliPayUnifiedOrderNotify notify = new AliPayUnifiedOrderNotify();
+            AliPayUnifiedOrderRequest notify = new AliPayUnifiedOrderRequest();
             result = aliPayService.checkParsePayResult(notify);
             PayCallbackContextHolder.setPayId(result.getTransactionId());
             result.setPayChannel(PayChannelType.ALI);

@@ -27,9 +27,13 @@ public interface PayProperties {
 
     public String getAliAppId();
 
+    public String getAliMchPublicKey();
+
     public String getAliMchPrivateKey();
 
     public String getAliAliPublicKey();
+
+    public String getAliAliRootCertPath();
 
     public String getAliNotifyUrl();
 
