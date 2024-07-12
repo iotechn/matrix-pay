@@ -39,8 +39,6 @@ public abstract class MatrixBasePayRequest implements Serializable {
      * -- SETTER --
      *  如果配置中已经设置，可以不设置值.
      *
-     * @param appid 微信公众号appid
-
      */
     @Setter
     private String appid;
@@ -56,8 +54,6 @@ public abstract class MatrixBasePayRequest implements Serializable {
      * -- SETTER --
      *  如果配置中已经设置，可以不设置值.
      *
-     * @param mchId 微信商户号
-
      */
     @Setter
     private String mchId;

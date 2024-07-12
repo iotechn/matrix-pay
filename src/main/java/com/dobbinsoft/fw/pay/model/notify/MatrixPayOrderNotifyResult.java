@@ -27,7 +27,7 @@ public class MatrixPayOrderNotifyResult extends MatrixBasePayResult {
      * 是否必填：否，单品优惠才有
      * 类型：String(6000)
      * 示例值：[{"promotion_detail":[{"promotion_id":"109519","name":"单品惠-6","scope":"SINGLE","type":"DISCOUNT","amount":5,"activity_id":"931386","wxpay_contribute":0,"merchant_contribute":0,"other_contribute":5,"goods_detail":[{"goods_id":"a_goods1","goods_remark":"商品备注","quantity":7,"price":1,"discount_amount":4},{"goods_id":"a_goods2","goods_remark":"商品备注","quantity":1,"price":2,"discount_amount":1}]}]}
-     * 描述：单品优惠专用参数，详见https://pay.weixin.qq.com/wiki/doc/api/danpin.php?chapter=9_203&index=4
+     * 描述：单品优惠专用参数，<a href="https://pay.weixin.qq.com/wiki/doc/api/danpin.php?chapter=9_203&index=4">详见</a>
      * </pre>
      */
     private String promotionDetail;
@@ -135,7 +135,7 @@ public class MatrixPayOrderNotifyResult extends MatrixBasePayResult {
      * 是否必填：否
      * 类型：Int
      * 示例值：100
-     * 描述：应结订单金额=订单金额-非充值代金券金额，应结订单金额<=订单金额。
+     * 描述：应结订单金额=订单金额-非充值代金券金额，应结订单金额小于等于订单金额。
      * </pre>
      */
     private Integer settlementTotalFee;
@@ -179,7 +179,7 @@ public class MatrixPayOrderNotifyResult extends MatrixBasePayResult {
      * 是否必填：否
      * 类型：Int
      * 示例值：10
-     * 描述：代金券金额<=订单金额，订单金额-代金券金额=现金支付金额，详见支付金额
+     * 描述：代金券金额小于等于订单金额，订单金额-代金券金额=现金支付金额，详见支付金额
      * </pre>
      */
     private Integer couponFee;
@@ -249,7 +249,7 @@ public class MatrixPayOrderNotifyResult extends MatrixBasePayResult {
      * 变量名：version
      * 类型：String(32)
      * 示例值：1.0
-     * 更多信息，详见文档：https://pay.weixin.qq.com/wiki/doc/api/danpin.php?chapter=9_101&index=1
+     * 更多信息，详见文档：<a href="https://pay.weixin.qq.com/wiki/doc/api/danpin.php?chapter=9_101&index=1">点击查看</a>
      * </pre>
      */
     private String version;

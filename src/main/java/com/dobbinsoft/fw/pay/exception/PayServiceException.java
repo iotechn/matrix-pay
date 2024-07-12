@@ -2,10 +2,8 @@ package com.dobbinsoft.fw.pay.exception;
 
 /**
  * ClassName: PayServiceException
- * Description: TODO
+ * Description: 支付服务异常
  *
- * @author: e-weichaozheng
- * @date: 2021-04-20
  */
 public class PayServiceException extends RuntimeException {
 

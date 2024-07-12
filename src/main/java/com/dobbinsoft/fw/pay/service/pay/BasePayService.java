@@ -4,10 +4,8 @@ import com.dobbinsoft.fw.pay.config.PayProperties;
 
 /**
  * ClassName: BasePayService
- * Description: TODO
+ * Description: 基本支付服务
  *
- * @author: e-weichaozheng
- * @date: 2021-04-20
  */
 public abstract class BasePayService {
 

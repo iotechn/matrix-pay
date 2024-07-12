@@ -231,7 +231,7 @@ public class MatrixPayUnifiedOrderRequest extends MatrixBasePayRequest {
      * 字段名：浏览器指纹.
      * 变量名：fingerprint
      * 是否必填：否
-     * 详细参考 https://pay.weixin.qq.com/wiki/doc/api/H5.php?chapter=15_7&index=6
+     *  <a href="https://pay.weixin.qq.com/wiki/doc/api/H5.php?chapter=15_7&index=6">详细参考</a>
      * </pre>
      */
     private String fingerprint;

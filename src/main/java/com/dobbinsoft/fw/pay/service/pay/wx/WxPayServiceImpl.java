@@ -128,6 +128,9 @@ public class WxPayServiceImpl extends BasePayService implements MatrixPayService
             Response response = client.newCall(request).execute();
             String xml = response.body().string();
             WxPayUnifiedOrderResponse wxPayUnifiedOrderResponse = JacksonXmlUtil.parseObject(xml, WxPayUnifiedOrderResponse.class);
+            if ("FAIL".equals(wxPayUnifiedOrderResponse.getResultCode())) {
+                throw new MatrixPayException("[微信] 统一下与预期不一致 err_code:%s, err_code_des:%s".formatted(wxPayUnifiedOrderResponse.getErrCode(), wxPayUnifiedOrderResponse.getErrCodeDes()));
+            }
             WxPayUnifiedPrepayModel prepayModel = new WxPayUnifiedPrepayModel();
             prepayModel.setAppId(wxPayUnifiedOrderResponse.getAppid());
             prepayModel.setNonceStr(wxPayUnifiedOrderResponse.getNonceStr());

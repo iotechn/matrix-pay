@@ -1,5 +1,7 @@
 package com.dobbinsoft.fw.pay.model.notify;
 
+import com.dobbinsoft.fw.support.utils.JacksonXmlUtil;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,11 +16,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MatrixPayNotifyResponse {
 
-    private transient static final String FAIL = "FAIL";
-    private transient static final String SUCCESS = "SUCCESS";
+    private static final String FAIL = "FAIL";
+    private static final String SUCCESS = "SUCCESS";
 
+//    @JsonProperty("return_code")
     private String returnCode;
 
+//    @JsonProperty("return_msg")
     private String returnMsg;
 
     /**
@@ -28,8 +32,8 @@ public class MatrixPayNotifyResponse {
      * @return the string
      */
     public static String fail(String msg) {
-        // TODO
-        return null;
+        MatrixPayNotifyResponse response = new MatrixPayNotifyResponse(FAIL, msg);
+        return JacksonXmlUtil.toXmlString(response);
     }
 
     /**
@@ -39,8 +43,8 @@ public class MatrixPayNotifyResponse {
      * @return the string
      */
     public static String success(String msg) {
-        // TODO
-        return null;
+        MatrixPayNotifyResponse response = new MatrixPayNotifyResponse(SUCCESS, msg);
+        return JacksonXmlUtil.toXmlString(response);
     }
 
 }

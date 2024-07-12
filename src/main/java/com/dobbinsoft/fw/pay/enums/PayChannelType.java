@@ -4,8 +4,6 @@ package com.dobbinsoft.fw.pay.enums;
  * ClassName: PayChannel
  * Description: 支付渠道类型枚举
  *
- * @author: e-weichaozheng
- * @date: 2021-04-20
  */
 public enum PayChannelType {
     WX("WX", "微信支付"),

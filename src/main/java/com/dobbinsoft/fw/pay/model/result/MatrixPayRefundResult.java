@@ -91,7 +91,7 @@ public class MatrixPayRefundResult extends MatrixBasePayResult implements Serial
      * 是否必填：否
      * 类型：Int
      * 示例值：100
-     * 描述：代金券退款金额<=退款金额，退款金额-代金券或立减优惠退款金额为现金，说明详见代金券或立减优惠
+     * 描述：代金券退款金额小于等于退款金额，退款金额-代金券或立减优惠退款金额为现金，说明详见代金券或立减优惠
      * </pre>
      */
     private Integer couponRefundFee;

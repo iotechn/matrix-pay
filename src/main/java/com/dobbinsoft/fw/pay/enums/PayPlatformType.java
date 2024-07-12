@@ -2,10 +2,8 @@ package com.dobbinsoft.fw.pay.enums;
 
 /**
  * ClassName: PayPlatform
- * Description: TODO
+ * Description: 系统平台
  *
- * @author: e-weichaozheng
- * @date: 2021-04-20
  */
 public enum PayPlatformType {
     APP(1, "APP"),

@@ -11,10 +11,7 @@ import com.dobbinsoft.fw.pay.model.request.MatrixBasePayRequest;
 import com.dobbinsoft.fw.pay.model.request.MatrixPayRefundRequest;
 import com.dobbinsoft.fw.pay.model.request.MatrixPayUnifiedOrderRequest;
 import com.dobbinsoft.fw.pay.model.result.MatrixPayRefundResult;
-import com.dobbinsoft.fw.pay.service.pay.ali.AliPayServiceImpl;
-import com.dobbinsoft.fw.pay.service.pay.ali.model.AliPayUnifiedOrderRequest;
 import com.dobbinsoft.fw.pay.service.pay.wx.WxPayServiceImpl;
-import com.dobbinsoft.fw.support.utils.JacksonUtil;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +20,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * ClassName: PayServiceImpl
@@ -33,21 +28,18 @@ import java.util.Map;
 @Slf4j
 public class MatrixPayServiceImpl implements MatrixPayService<Object> {
 
-    private AliPayServiceImpl aliPayService;
-
     private WxPayServiceImpl wxPayService;
 
     public MatrixPayServiceImpl(PayProperties payProperties) {
-        this.aliPayService = new AliPayServiceImpl(payProperties);
         this.wxPayService = new WxPayServiceImpl(payProperties);
     }
 
     @Override
     public Object createOrder(MatrixPayUnifiedOrderRequest entity) throws MatrixPayException {
         this.checkParam(entity);
-        if (entity.getPayChannel() == PayChannelType.ALI) {
+        /*if (entity.getPayChannel() == PayChannelType.ALI) {
             return this.aliPayService.createOrder(entity);
-        } else if (entity.getPayChannel() == PayChannelType.WX) {
+        } else */if (entity.getPayChannel() == PayChannelType.WX) {
             return this.wxPayService.createOrder(entity);
         } else {
             throw new MatrixPayException("支付渠道不支持");
@@ -58,9 +50,9 @@ public class MatrixPayServiceImpl implements MatrixPayService<Object> {
     @Override
     public MatrixPayRefundResult refund(MatrixPayRefundRequest request) throws MatrixPayException {
         this.checkParam(request);
-        if (request.getPayChannel() == PayChannelType.ALI) {
+        /*if (request.getPayChannel() == PayChannelType.ALI) {
             return this.aliPayService.refund(request);
-        } else if (request.getPayChannel() == PayChannelType.WX) {
+        } else */if (request.getPayChannel() == PayChannelType.WX) {
             return this.wxPayService.refund(request);
         } else {
             throw new MatrixPayException("支付渠道不支持");
@@ -73,7 +65,7 @@ public class MatrixPayServiceImpl implements MatrixPayService<Object> {
         MatrixPayOrderNotifyResult result;
         if ("RSA2".equals(servletRequest.getParameter("sign_type"))) {
             // 支付宝依据
-            Map<String, String> map = new HashMap<>();
+            /*Map<String, String> map = new HashMap<>();
             servletRequest.getParameterMap().forEach((k, v) -> {
                 map.put(k, v[0]);
             });
@@ -84,7 +76,8 @@ public class MatrixPayServiceImpl implements MatrixPayService<Object> {
             AliPayUnifiedOrderRequest notify = new AliPayUnifiedOrderRequest();
             result = aliPayService.checkParsePayResult(notify);
             PayCallbackContextHolder.setPayId(result.getTransactionId());
-            result.setPayChannel(PayChannelType.ALI);
+            result.setPayChannel(PayChannelType.ALI);*/
+            throw new MatrixPayException("支付渠道不支持");
         } else {
             try (ServletInputStream is = servletRequest.getInputStream()) {
                 byte[] bytes = new byte[servletRequest.getContentLength()];

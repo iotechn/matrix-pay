@@ -32,5 +32,9 @@ public class WxPayUnifiedOrderResponse {
     private String prepayId;
     @JsonProperty("trade_type")
     private String tradeType;
+    @JsonProperty("err_code")
+    private String errCode;
+    @JsonProperty("err_code_des")
+    private String errCodeDes;
 
 }

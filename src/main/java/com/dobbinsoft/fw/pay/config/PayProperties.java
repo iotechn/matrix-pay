@@ -1,11 +1,9 @@
 package com.dobbinsoft.fw.pay.config;
 
 /**
- * ClassName: MerchantPropertiesHolder
- * Description: TODO
+ * ClassName: PayProperties
+ * Description: 支付配置属性
  *
- * @author: e-weichaozheng
- * @date: 2021-04-20
  */
 public interface PayProperties {
 
